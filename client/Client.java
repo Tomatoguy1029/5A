@@ -51,6 +51,7 @@ public class Client {
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input. Please enter a number (1 or 2):");
+                    System.out.println("Type 'END' to disconnect:");
                 }
             }
 
