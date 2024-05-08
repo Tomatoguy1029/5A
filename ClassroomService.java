@@ -27,4 +27,21 @@ public class ClassroomService {
             System.out.println(e.getMessage());
         }
     }
+
+    // 教室情報をデータベースから削除するメソッド
+    public void deleteClassroom(String classroom_id) {
+        String url = "jdbc:sqlite:akikatu.db";
+        String sql = "DELETE FROM Classrooms WHERE classroom_id = ?;";
+        // sqlクエリを作成
+        try (Connection conn = DriverManager.getConnection(url);
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, classroom_id);
+
+            pstmt.executeUpdate();
+            System.out.println("Delete completed with UUID: " + classroom_id);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
