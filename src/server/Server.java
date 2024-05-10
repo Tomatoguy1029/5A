@@ -1,12 +1,15 @@
 //サーバーのメインクラス
-package server;
+package src.server;
 
 import java.io.*;
 import java.net.*;
 
+import src.service.ClassroomService;
+
 public class Server {
     public static int PORT = 8080;
     public static int mode = 0;
+    private static ClassroomService classroomService = new ClassroomService();
 
     public static void main(String[] args) throws IOException {
         if (args.length > 0 && args[0] != null) {
@@ -40,7 +43,7 @@ public class Server {
                     } else {
                         mode = Integer.parseInt(str);
                     }
-                    str = handleMode(socket, mode);
+                    str = handleMode(socket, mode, in, out);
                     out.println(str); // データの送信
                 }
             } finally {
@@ -52,9 +55,9 @@ public class Server {
         }
     }
 
-    private static String handleMode(Socket socket, int mode) throws IOException {
+    private static String handleMode(Socket socket, int mode, BufferedReader in, PrintWriter out) throws IOException {
         if (mode == 1) {
-            // addClassroomInfo(socket);
+            addClassroomInfo(in, out);
             return "Classroom info added.";
         } else if (mode == 2) {
             // postClassroomStatus(socket);
@@ -64,5 +67,25 @@ public class Server {
             return "Invalid mode.";
         }
     }
+
+    private static String addClassroomInfo(BufferedReader in, PrintWriter out) throws IOException {
+        out.println("Enter classroom name:");
+        String name = in.readLine();
+
+        out.println("Enter classroom location:");
+        String location = in.readLine();
+
+        out.println("Enter number of seats:");
+        int seats = Integer.parseInt(in.readLine());
+
+        out.println("Enter number of outlets:");
+        int outlets = Integer.parseInt(in.readLine());
+
+        out.println("Enter desk size:");
+        int deskSize = Integer.parseInt(in.readLine());
+
+        classroomService.insertClassroom(name, location, seats, outlets, deskSize);
+        return "Classroom info added: " + name + ", " + location + ", " + seats + " seats, " + outlets
+                + " outlets, desk size: " + deskSize;
+    }
 }
-// private static void addClassroomInfo(){}
