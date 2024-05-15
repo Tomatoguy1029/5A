@@ -14,7 +14,10 @@ public class Front extends JFrame {
     private JLabel normalTextLabel;
     private JLabel placeLabel;
     private JLabel conditionLabel;
-    private JCheckBox checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7;
+    private JCheckBox checkBox52, checkBox53, checkBox54, checkBox63;
+    private JCheckBox checkBoxPower, checkBoxLargeDesk;
+    private JComboBox<String> dayComboBox;
+    private JCheckBox[] timeCheckBoxes;
     private JButton switchToAnotherPageButtonA; // ボタンA
     private JButton switchToAnotherPageButtonB; // ボタンB
     private JButton switchToLoginPageButtonC; // ボタンC
@@ -37,43 +40,6 @@ public class Front extends JFrame {
         normalTextLabel = new JLabel("教室検索");
         normalTextLabel.setBounds(50, 50, 300, 50);
         initialPage.add(normalTextLabel);
-
-        placeLabel = new JLabel("・場所");
-        placeLabel.setBounds(50, 50, 300, 50);
-        initialPage.add(placeLabel);
-
-        conditionLabel = new JLabel("・条件");
-        conditionLabel.setBounds(50, 50, 300, 50);
-        initialPage.add(conditionLabel);
-
-        // チェックボックス付きの箇条書き
-        checkBox1 = new JCheckBox("52号館");
-        checkBox1.setBounds(50, 100, 300, 30);
-        initialPage.add(checkBox1);
-
-        checkBox2 = new JCheckBox("53号館");
-        checkBox2.setBounds(50, 140, 300, 30);
-        initialPage.add(checkBox2);
-
-        checkBox3 = new JCheckBox("54号館");
-        checkBox3.setBounds(50, 180, 300, 30);
-        initialPage.add(checkBox3);
-
-        checkBox4 = new JCheckBox("63号館");
-        checkBox4.setBounds(50, 100, 300, 30);
-        initialPage.add(checkBox4);
-
-        checkBox5 = new JCheckBox("電源あり");
-        checkBox5.setBounds(50, 140, 300, 30);
-        initialPage.add(checkBox5);
-
-        checkBox6 = new JCheckBox("机が広い");
-        checkBox6.setBounds(50, 180, 300, 30);
-        initialPage.add(checkBox6);
-
-        checkBox7 = new JCheckBox("長時間利用可");
-        checkBox7.setBounds(50, 100, 300, 30);
-        initialPage.add(checkBox7);
 
         // ボタンA
         switchToAnotherPageButtonA = new JButton(getCurrentDateTime()); // 初期状態で現在の日付と時刻を表示
@@ -115,6 +81,32 @@ public class Front extends JFrame {
             }
         });
         initialPage.add(switchToLoginPageButtonC);
+
+        JPanel locationConditionPanel = new JPanel(new FlowLayout());
+        JPanel timePanel = new JPanel(new FlowLayout());
+
+        // 場所と条件フィルタの設定
+        checkBox52 = new JCheckBox("52号館");
+        checkBox53 = new JCheckBox("53号館");
+        checkBox54 = new JCheckBox("54号館");
+        checkBox63 = new JCheckBox("63号館");
+        checkBoxPower = new JCheckBox("電源あり");
+        checkBoxLargeDesk = new JCheckBox("机が広い");
+        locationConditionPanel.add(checkBox52);
+        locationConditionPanel.add(checkBox53);
+        locationConditionPanel.add(checkBox54);
+        locationConditionPanel.add(checkBox63);
+        locationConditionPanel.add(checkBoxPower);
+        locationConditionPanel.add(checkBoxLargeDesk);
+
+        // 曜日と時間フィルタの設定
+        dayComboBox = new JComboBox<>(new String[] { "月曜", "火曜", "水曜", "木曜", "金曜", "土曜" });
+        timeCheckBoxes = new JCheckBox[7];
+        for (int i = 0; i < 7; i++) {
+            timeCheckBoxes[i] = new JCheckBox((i + 1) + "限");
+            timePanel.add(timeCheckBoxes[i]);
+        }
+        timePanel.add(dayComboBox);
 
         // もう一つのページのコンテンツ
         JPanel anotherPage = new JPanel();
@@ -185,38 +177,11 @@ public class Front extends JFrame {
         // ウィンドウの新しいサイズを取得
         int width = getWidth();
         int height = getHeight();
-        int startx = width / 5;
         int separatorheight = height / 4;
 
         // 教室検索の文字の新しい位置とサイズ
-        normalTextLabel.setBounds(startx + 15, separatorheight + 15, 300, 50);
-        normalTextLabel.setFont(new Font("Arial", Font.PLAIN, 20)); // フォントの設定
 
-        int fontsize = 15; // 基本の文字サイズ
 
-        // 場所
-        placeLabel.setBounds(startx, separatorheight + 50, 300, 50);
-        placeLabel.setFont(new Font("Arial", Font.PLAIN, fontsize + 2)); // フォントの設定
-        checkBox1.setBounds(startx + 75, separatorheight + 60, 300, 30);
-        checkBox1.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-        checkBox2.setBounds(startx + 75, separatorheight + 90, 300, 30);
-        checkBox2.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-        checkBox3.setBounds(startx + 75, separatorheight + 120, 300, 30);
-        checkBox3.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-        checkBox4.setBounds(startx + 75, separatorheight + 150, 300, 30);
-        checkBox4.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-
-        // 条件
-        conditionLabel.setBounds(startx, separatorheight + 200, 300, 50);
-        conditionLabel.setFont(new Font("Arial", Font.PLAIN, fontsize + 2)); // フォントの設定
-        checkBox5.setBounds(startx + 75, separatorheight + 210, 300, 30);
-        checkBox5.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-        checkBox6.setBounds(startx + 75, separatorheight + 240, 300, 30);
-        checkBox6.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-        checkBox7.setBounds(startx + 75, separatorheight + 270, 300, 30);
-        checkBox7.setFont(new Font("Arial", Font.PLAIN, fontsize)); // フォントの設定
-
-        // ボタンAの新しい位置とサイズを計算して設定
         switchToAnotherPageButtonA.setBounds(width / 6, height / 9, width * 2 / 3, height / 8);
         // ボタンAのフォントと新しいサイズを設定
         switchToAnotherPageButtonA.setFont(new Font("Arial", Font.PLAIN, width / 15)); // フォントの設定
