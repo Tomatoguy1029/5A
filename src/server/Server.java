@@ -1,15 +1,12 @@
-//サーバーのメインクラス
+//クライアントとの通信を担当するスレッドを作成し、クライアントからのリクエストを処理する
 package src.server;
 
 import java.io.*;
 import java.net.*;
-
-import src.service.ClassroomService;
+import java.util.concurrent.CompletableFuture;
 
 public class Server {
     public static int PORT = 8080;
-    public static int mode = 0;
-    private static ClassroomService classroomService = new ClassroomService();
 
     public static void main(String[] args) throws IOException {
         if (args.length > 0 && args[0] != null) {
@@ -23,69 +20,81 @@ public class Server {
         ServerSocket s = new ServerSocket(PORT); // ソケットを作成する
         System.out.println("Started: " + s);
         try {
-            Socket socket = s.accept(); // コネクション設定要求を待つ
-            try {
-                System.out.println(
-                        "Connection accepted: " + socket);
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(
-                                socket.getInputStream())); // データ受信用バッファの設定
-                PrintWriter out = new PrintWriter(
-                        new BufferedWriter(
-                                new OutputStreamWriter(
-                                        socket.getOutputStream())),
-                        true); // 送信バッファ設定
-
-                while (true) {
-                    String str = in.readLine(); // データの受信
-                    if (str.equals("END")) {
-                        break;
-                    } else {
-                        mode = Integer.parseInt(str);
-                    }
-                    str = handleMode(socket, mode, in, out);
-                    out.println(str); // データの送信
-                }
-            } finally {
-                System.out.println("closing...");
-                socket.close();
+            while (true) {
+                Socket socket = s.accept(); // コネクション設定要求を待つ
+                new Thread(new ClientHandler(socket)).start();
             }
         } finally {
             s.close();
         }
     }
 
-    private static String handleMode(Socket socket, int mode, BufferedReader in, PrintWriter out) throws IOException {
-        if (mode == 1) {
-            addClassroomInfo(in, out);
-            return "Classroom info added.";
-        } else if (mode == 2) {
-            // postClassroomStatus(socket);
-            return "Classroom status posted.";
-        } else {
-            System.out.println("Invalid mode.");
-            return "Invalid mode.";
+    private static class ClientHandler implements Runnable {
+        private Socket socket;
+        public BufferedReader in;
+        public PrintWriter out;
+        private AddClassroomInfo addCInfo = new AddClassroomInfo();
+
+        // クライアントとの通信を担当するスレッド
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+            try {
+                this.in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // データ受信用バッファの設定
+                this.out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true); // 送信バッファ設定
+            } catch (IOException e) {
+                System.err.println("Error setting up streams: " + e.getMessage());
+            }
         }
-    }
 
-    private static String addClassroomInfo(BufferedReader in, PrintWriter out) throws IOException {
-        out.println("Enter classroom name:");
-        String name = in.readLine();
+        @Override
+        public void run() {
+            try {
+                System.out.println("Connection accepted: " + socket);
+                while (true) {
+                    String str = in.readLine(); // データの受信
+                    if (str.equals("END")) {
+                        break;
+                    } else {
+                        try {
+                            int mode = Integer.parseInt(str);
+                            handleMode(mode);
+                        } catch (NumberFormatException e) {
+                            out.println("Invalid input. Please enter a number (1 or 2):");
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Connection error: " + e.getMessage());
+            } finally {
+                try {
+                    System.out.println("closing...");
+                    socket.close();
+                } catch (IOException e) {
+                    System.err.println("Error closing socket: " + e.getMessage());
+                }
+            }
+        }
 
-        out.println("Enter classroom location:");
-        String location = in.readLine();
+        private String handleMode(int mode) throws IOException {
+            switch (mode) {
+                case 1:
+                    return handleAddClassroomInfo();
+                case 2:
+                    return handlePostClassroomStatus();
+                default:
+                    System.out.println("Invalid mode.");
+                    return "Invalid mode.";
+            }
+        }
 
-        out.println("Enter number of seats:");
-        int seats = Integer.parseInt(in.readLine());
+        private String handleAddClassroomInfo() throws IOException {
+            addCInfo.addInfoAsync(in, out); 
+            return "Classroom info added.";
+        }
 
-        out.println("Enter number of outlets:");
-        int outlets = Integer.parseInt(in.readLine());
-
-        out.println("Enter desk size:");
-        int deskSize = Integer.parseInt(in.readLine());
-
-        classroomService.insertClassroom(name, location, seats, outlets, deskSize);
-        return "Classroom info added: " + name + ", " + location + ", " + seats + " seats, " + outlets
-                + " outlets, desk size: " + deskSize;
+        private String handlePostClassroomStatus() throws IOException {
+            out.println("Classroom status posted.");
+            return "Classroom status posted.";
+        }
     }
 }
