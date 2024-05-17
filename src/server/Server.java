@@ -87,9 +87,16 @@ public class Server {
             }
         }
 
-        private String handleAddClassroomInfo() throws IOException {
-            addCInfo.addInfoAsync(in, out); 
-            return "Classroom info added.";
+        private String handleAddClassroomInfo() {
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                addCInfo.addInfoAsync(in, out);
+            });
+            try {
+                future.get(); // 非同期処理が完了するまで待つ
+                return "Classroom info added.";
+            } catch (Exception e) {
+                return "Error completing the operation: " + e.getMessage();
+            }
         }
 
         private String handlePostClassroomStatus() throws IOException {
