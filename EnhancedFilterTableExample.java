@@ -4,6 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.Timer;
 
 public class EnhancedFilterTableExample {
     private JFrame frame;
@@ -14,14 +21,17 @@ public class EnhancedFilterTableExample {
     private JComboBox<String> dayComboBox;
     private JCheckBox[] timeCheckBoxes;
     private JButton searchButton;
+    private JButton timeButton;
     private List<RowFilter<Object, Object>> filters;
+    private JSeparator separator; // セパレータ
+    private JLabel a, b, c;
 
     public EnhancedFilterTableExample() {
         // メインフレームの設定
-        frame = new JFrame("Enhanced Filter Table Example");
+        frame = new JFrame("検索画面");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 700);
-        frame.setLayout(new BorderLayout());
+        frame.setLayout(null);
 
         // サンプルデータの作成（場所、条件、曜日、時間）
         Object[][] data = {
@@ -42,7 +52,8 @@ public class EnhancedFilterTableExample {
                 { "53-101", "53号館", "", "", "月曜3限,月曜6限,火曜6限,水曜4限,木曜2限,金曜5限,金曜6限" },
                 { "53-103", "53号館", "", "", "月曜1限,月曜3限,月曜6限,火曜4限,火曜6限,水曜6限,木曜6限,金曜4限,金曜6限" },
                 { "53-104", "53号館", "", "", "月曜6限,火曜2限,火曜6限,水曜4限,水曜6限,木曜3限,木曜4限,木曜5限,木曜6限,金曜4限,金曜5限,金曜6限" },
-                { "53-201", "53号館", "", "", "月曜1限,月曜6限,火曜6限,水曜5限,木曜4限,木曜6限,金曜6限" },
+                { "53-201", "53号館", "", "",
+                        "月曜1限,月曜6限,火曜6限,水曜5限,木曜4限,木曜6限,金曜6限" },
                 { "53-203", "53号館", "", "", "月曜1限,月曜5限,月曜6限,火曜6限,水曜1限,水曜6限,金曜4限,金曜6限" },
                 { "53-204", "53号館", "", "", "月曜1限,月曜6限,水曜6限,木曜6限,金曜5限,金曜6限" },
                 { "53-301", "53号館", "", "", "月曜1限,月曜6限,火曜1限,火曜6限,水曜1限,水曜6限,木曜4限,木曜6限,金曜6限" },
@@ -50,7 +61,8 @@ public class EnhancedFilterTableExample {
                 { "53-304", "53号館", "", "", "月曜6限,火曜3限,火曜6限,水曜6限,木曜4限,金曜3限,金曜4限,金曜5限,金曜6限" },
                 { "53-401", "53号館", "", "", "月曜1限,月曜6限,火曜1限,火曜6限,水曜1限,水曜6限,木曜6限,金曜4限,金曜5限,金曜6限" },
                 { "53-403", "53号館", "", "", "月曜1限,月曜6限,火曜4限,火曜6限,水曜1限,木曜4限,木曜5限,木曜6限,金曜6限" },
-                { "53-404", "53号館", "", "", "月曜1限,月曜4限,月曜6限,火曜4限,火曜5限,火曜6限,水曜1限,水曜5限,水曜6限,木曜1限,木曜4限,木曜6限,金曜3限,金曜4限,金曜5限,金曜6限" },
+                { "53-404", "53号館", "", "",
+                        "月曜1限,月曜4限,月曜6限,火曜4限,火曜5限,火曜6限,水曜1限,水曜5限,水曜6限,木曜1限,木曜4限,木曜6限,金曜3限,金曜4限,金曜5限,金曜6限" },
                 // 54号館
                 { "54-B01", "54号館", "", "", "月曜2限,月曜3限" },
                 { "54-B02", "54号館", "", "", "月曜2限,月曜3限,火曜4限" },
@@ -93,44 +105,71 @@ public class EnhancedFilterTableExample {
         // テーブルモデルの設定
         model = new DefaultTableModel(data, columnNames);
         table = new JTable(model);
-        JScrollPane scrollPane = new JScrollPane(table);
+        // JScrollPane scrollPane = new JScrollPane(table);
+
+        // セパレータ
+        separator = new JSeparator();
+        separator.setBounds(0, 180, 1000, 10); // セパレータの位置とサイズを設定
+        frame.add(separator);
 
         // フィルタパネルの設定
-        JPanel filterPanel = new JPanel(new BorderLayout());
-        JPanel locationConditionPanel = new JPanel(new FlowLayout());
-        JPanel timePanel = new JPanel(new FlowLayout());
+        JPanel filterPanel = new JPanel(null);
+        // JPanel locationConditionPanel = new JPanel(null);
+        // JPanel timePanel = new JPanel(new FlowLayout());
 
-        // 場所と条件フィルタの設定
-        checkBox52 = new JCheckBox("52号館");
-        checkBox53 = new JCheckBox("53号館");
-        checkBox54 = new JCheckBox("54号館");
-        checkBox63 = new JCheckBox("63号館");
-        checkBoxPower = new JCheckBox("電源あり");
-        checkBoxLargeDesk = new JCheckBox("机が広い");
-        locationConditionPanel.add(checkBox52);
-        locationConditionPanel.add(checkBox53);
-        locationConditionPanel.add(checkBox54);
-        locationConditionPanel.add(checkBox63);
-        locationConditionPanel.add(checkBoxPower);
-        locationConditionPanel.add(checkBoxLargeDesk);
+        a = new JLabel("教室検索");
+        a.setBounds(50, 0, 300, 20);
+        a.setFont(new Font("Arial", Font.PLAIN, 20));
+        filterPanel.add(a);
 
         // 曜日と時間フィルタの設定
         dayComboBox = new JComboBox<>(new String[] { "月曜", "火曜", "水曜", "木曜", "金曜", "土曜" });
         timeCheckBoxes = new JCheckBox[7];
+        dayComboBox.setBounds(40, 40, 100, 25);
+        filterPanel.add(dayComboBox);
         for (int i = 0; i < 7; i++) {
             timeCheckBoxes[i] = new JCheckBox((i + 1) + "限");
-            timePanel.add(timeCheckBoxes[i]);
+            timeCheckBoxes[i].setBounds(40 + i * 80, 70, 70, 15);
+            filterPanel.add(timeCheckBoxes[i]);
         }
-        timePanel.add(dayComboBox);
+
+        b = new JLabel("場所");
+        b.setBounds(30, 120, 300, 20);
+        b.setFont(new Font("Arial", Font.PLAIN, 15));
+        filterPanel.add(b);
+
+        // 場所と条件フィルタの設定
+        checkBox52 = new JCheckBox("52号館");
+        checkBox52.setBounds(40, 150, 100, 15);
+        checkBox53 = new JCheckBox("53号館");
+        checkBox53.setBounds(140, 150, 100, 15);
+        checkBox54 = new JCheckBox("54号館");
+        checkBox54.setBounds(240, 150, 100, 15);
+        checkBox63 = new JCheckBox("63号館");
+        checkBox63.setBounds(340, 150, 100, 15);
+        checkBoxPower = new JCheckBox("電源あり");
+
+        c = new JLabel("条件");
+        c.setBounds(30, 180, 300, 20);
+        c.setFont(new Font("Arial", Font.PLAIN, 15));
+        filterPanel.add(c);
+
+        checkBoxPower.setBounds(40, 210, 100, 15);
+        checkBoxLargeDesk = new JCheckBox("机が広い");
+        checkBoxLargeDesk.setBounds(140, 210, 100, 15);
+
+        filterPanel.add(checkBox52);
+        filterPanel.add(checkBox53);
+        filterPanel.add(checkBox54);
+        filterPanel.add(checkBox63);
+        filterPanel.add(checkBoxPower);
+        filterPanel.add(checkBoxLargeDesk);
 
         // 検索
         // 検索ボタンの作成
         searchButton = new JButton("Search");
-
-        // パネルにコンポーネントを追加
-        filterPanel.add(locationConditionPanel, BorderLayout.NORTH);
-        filterPanel.add(timePanel, BorderLayout.CENTER);
-        filterPanel.add(searchButton, BorderLayout.SOUTH);
+        searchButton.setBounds(500, 200, 100, 50);
+        filterPanel.add(searchButton);
 
         // 検索ボタンにアクションリスナーを追加
         searchButton.addActionListener(new ActionListener() {
@@ -140,8 +179,9 @@ public class EnhancedFilterTableExample {
         });
 
         // フレームにフィルタパネルとスクロールペインを追加
-        frame.add(filterPanel, BorderLayout.NORTH);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        filterPanel.setBounds(0, 200, 700, 500);
+        frame.add(filterPanel);
+        // frame.add(scrollPane, BorderLayout.CENTER);
         frame.setVisible(true);
     }
 
