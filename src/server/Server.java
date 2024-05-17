@@ -1,4 +1,3 @@
-//サーバーのメインクラス
 package src.server;
 
 import java.io.*;
