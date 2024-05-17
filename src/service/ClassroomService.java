@@ -11,8 +11,8 @@ public class ClassroomService {
     private static final String DATABASE_URL = "jdbc:sqlite:akikatu.db";
 
     // 教室情報をデータベースに登録するメソッド
-    public void insertClassroom(String name, int seats, int outlets, int deskSize, String available) {
-        String sql = "INSERT INTO Classrooms (classroom_id, name, seats, outlets, desk_size, available, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'));";
+    public void insertClassroom(String name, String location, int seats, int outlets, int deskSize, String available) {
+        String sql = "INSERT INTO Classrooms (classroom_id, name, location, seats, outlets, desk_size, available, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'));";
         // sqlクエリを作成
         try (Connection conn = DriverManager.getConnection(DATABASE_URL);
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -20,10 +20,11 @@ public class ClassroomService {
             String uniqueId = UUID.randomUUID().toString(); // UUIDを生成
             pstmt.setString(1, uniqueId);
             pstmt.setString(2, name);
-            pstmt.setInt(3, seats);
-            pstmt.setInt(4, outlets);
-            pstmt.setInt(5, deskSize);
-            pstmt.setString(6, available);
+            pstmt.setString(3, location);
+            pstmt.setInt(4, seats);
+            pstmt.setInt(5, outlets);
+            pstmt.setInt(6, deskSize);
+            pstmt.setString(7, available);
 
             pstmt.executeUpdate();// SQLクエリを実行。実行するとデータベースにデータが登録される
             System.out.println("Insert completed with UUID: " + uniqueId);
@@ -62,6 +63,7 @@ public class ClassroomService {
             while (rs.next()) {
                 System.out.println("Classroom ID: " + rs.getString("classroom_id"));
                 System.out.println("Name: " + rs.getString("name"));
+                System.out.println("Location: " + rs.getString("location"));
                 System.out.println("Seats: " + rs.getInt("seats"));
                 System.out.println("Outlets: " + rs.getInt("outlets"));
                 System.out.println("Desk Size: " + rs.getInt("desk_size"));

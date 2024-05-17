@@ -16,6 +16,9 @@ public class AddClassroomInfo {
                 out.println("Enter classroom name:");
                 String name = in.readLine();
 
+                out.println("Enter classroom location:");
+                String location = in.readLine();
+
                 out.println("Enter number of seats:");
                 int seats = Integer.parseInt(in.readLine());
 
@@ -28,7 +31,7 @@ public class AddClassroomInfo {
                 out.println("Enter available periods (comma separated):");
                 String available = in.readLine();
 
-                classroomService.insertClassroom(name, seats, outlets, deskSize, available);
+                classroomService.insertClassroom(name, location, seats, outlets, deskSize, available);
                 out.println("Classroom info added: " + name + ", " + seats + " seats, " + outlets
                         + " outlets, desk size: " + deskSize + ", available periods: " + available);
             } catch (IOException | NumberFormatException e) {
