@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,8 +13,6 @@ public class Front extends JFrame {
     private CardLayout cardLayout;
     private JPanel cardPanel;
     private JLabel normalTextLabel;
-    private JLabel placeLabel;
-    private JLabel conditionLabel;
     private JCheckBox checkBox52, checkBox53, checkBox54, checkBox63;
     private JCheckBox checkBoxPower, checkBoxLargeDesk;
     private JComboBox<String> dayComboBox;
@@ -35,6 +34,8 @@ public class Front extends JFrame {
         // 最初の画面のコンテンツ
         JPanel initialPage = new JPanel();
         initialPage.setLayout(null); // 自由な配置のためにレイアウトマネージャーを無効にする
+        //各コンポーネントにsetBounds(x, y, width, height) 
+
 
         // 教室検索テキスト
         normalTextLabel = new JLabel("教室検索");
@@ -108,9 +109,6 @@ public class Front extends JFrame {
         }
         timePanel.add(dayComboBox);
 
-        // もう一つのページのコンテンツ
-        JPanel anotherPage = new JPanel();
-        anotherPage.add(new JLabel("Another Page"));
         JButton backToInitialPageButton = new JButton("Back to Initial Page");
         backToInitialPageButton.addActionListener(new ActionListener() {
             @Override
@@ -118,6 +116,18 @@ public class Front extends JFrame {
                 cardLayout.show(cardPanel, "initialPage");
             }
         });
+
+        JPanel anotherPage = new JPanel();
+        anotherPage.add(new JLabel("Another Page"));
+        JButton backToInitialFromAnotherButton = new JButton("Back to Initial Page");
+        backToInitialFromAnotherButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "initialPage");
+            }
+        });
+        anotherPage.add(backToInitialFromAnotherButton);
+
         anotherPage.add(backToInitialPageButton);
 
         // ログインページのコンテンツ
@@ -162,14 +172,14 @@ public class Front extends JFrame {
                 }
             }
         });
-        timer.setInitialDelay(0); // タイマーの初期遅延を0ミリ秒に設定
-        timer.start();
-    }
+     
 
-    // 現在の日付と時刻を取得するメソッド
-    private String getCurrentDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        return dateFormat.format(new Date());
+    
+    
+     // 現在の日付と時刻を取得するメソッド
+     private String getCurrentDateTime() {
+     
+
     }
 
     // ウィンドウのサイズが変更された際にコンポーネントのサイズと位置を調整するメソッド
@@ -181,9 +191,6 @@ public class Front extends JFrame {
 
         // 教室検索の文字の新しい位置とサイズ
 
-
-        switchToAnotherPageButtonA.setBounds(width / 6, height / 9, width * 2 / 3, height / 8);
-        // ボタンAのフォントと新しいサイズを設定
         switchToAnotherPageButtonA.setFont(new Font("Arial", Font.PLAIN, width / 15)); // フォントの設定
 
         // セパレータの新しい位置とサイズを計算して設定
