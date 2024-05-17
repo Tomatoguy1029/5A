@@ -1,4 +1,3 @@
-//classroom infoをデータベースに登録する処理を行うクラス
 package src.server;
 
 import java.io.BufferedReader;
@@ -17,9 +16,6 @@ public class AddClassroomInfo {
                 out.println("Enter classroom name:");
                 String name = in.readLine();
 
-                out.println("Enter classroom location:");
-                String location = in.readLine();
-
                 out.println("Enter number of seats:");
                 int seats = Integer.parseInt(in.readLine());
 
@@ -29,10 +25,13 @@ public class AddClassroomInfo {
                 out.println("Enter desk size:");
                 int deskSize = Integer.parseInt(in.readLine());
 
-                classroomService.insertClassroom(name, location, seats, outlets, deskSize);
-                out.println("Classroom info added: " + name + ", " + location + ", " + seats + " seats, " + outlets
-                        + " outlets, desk size: " + deskSize);
-            } catch (IOException e) {
+                out.println("Enter available periods (comma separated):");
+                String available = in.readLine();
+
+                classroomService.insertClassroom(name, seats, outlets, deskSize, available);
+                out.println("Classroom info added: " + name + ", " + seats + " seats, " + outlets
+                        + " outlets, desk size: " + deskSize + ", available periods: " + available);
+            } catch (IOException | NumberFormatException e) {
                 out.println("Error adding classroom info: " + e.getMessage());
             }
         });
