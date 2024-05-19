@@ -10,10 +10,12 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
 import javax.swing.Timer;
 
-public class EnhancedFilterTableExample {
+public class EnhancedFilterTableExample extends JFrame {
     private JFrame frame;
+    private JPanel filterPanel, sidePanel, timePanel;
     private JTable table;
     private DefaultTableModel model;
     private JCheckBox checkBox52, checkBox53, checkBox54, checkBox63;
@@ -21,9 +23,10 @@ public class EnhancedFilterTableExample {
     private JComboBox<String> dayComboBox;
     private JCheckBox[] timeCheckBoxes;
     private JButton searchButton;
+    private JButton addroomButton;
     private JButton timeButton;
     private List<RowFilter<Object, Object>> filters;
-    private JSeparator separator; // セパレータ
+
     private JLabel a, b, c;
 
     public EnhancedFilterTableExample() {
@@ -107,18 +110,15 @@ public class EnhancedFilterTableExample {
         table = new JTable(model);
         // JScrollPane scrollPane = new JScrollPane(table);
 
-        // セパレータ
-        separator = new JSeparator();
-        separator.setBounds(0, 180, 1000, 10); // セパレータの位置とサイズを設定
-        frame.add(separator);
-
-        // フィルタパネルの設定
-        JPanel filterPanel = new JPanel(null);
-        // JPanel locationConditionPanel = new JPanel(null);
-        // JPanel timePanel = new JPanel(new FlowLayout());
+        filterPanel = new JPanel(null);
+        filterPanel.setBackground(Color.LIGHT_GRAY); // ここで色を設定
+        sidePanel = new JPanel(null);
+        sidePanel.setBackground(Color.GRAY); // ここで色を設定
+        timePanel = new JPanel(null);
+        timePanel.setBackground(Color.PINK); // ここで色を設定
 
         a = new JLabel("教室検索");
-        a.setBounds(50, 0, 300, 20);
+        a.setBounds(50, 5, 300, 20);
         a.setFont(new Font("Arial", Font.PLAIN, 20));
         filterPanel.add(a);
 
@@ -134,29 +134,29 @@ public class EnhancedFilterTableExample {
         }
 
         b = new JLabel("場所");
-        b.setBounds(30, 120, 300, 20);
+        b.setBounds(40, 140, 300, 20);
         b.setFont(new Font("Arial", Font.PLAIN, 15));
         filterPanel.add(b);
 
         // 場所と条件フィルタの設定
         checkBox52 = new JCheckBox("52号館");
-        checkBox52.setBounds(40, 150, 100, 15);
+        checkBox52.setBounds(40, 170, 100, 15);
         checkBox53 = new JCheckBox("53号館");
-        checkBox53.setBounds(140, 150, 100, 15);
+        checkBox53.setBounds(140, 170, 100, 15);
         checkBox54 = new JCheckBox("54号館");
-        checkBox54.setBounds(240, 150, 100, 15);
+        checkBox54.setBounds(240, 170, 100, 15);
         checkBox63 = new JCheckBox("63号館");
-        checkBox63.setBounds(340, 150, 100, 15);
+        checkBox63.setBounds(340, 170, 100, 15);
         checkBoxPower = new JCheckBox("電源あり");
 
         c = new JLabel("条件");
-        c.setBounds(30, 180, 300, 20);
+        c.setBounds(40, 220, 300, 20);
         c.setFont(new Font("Arial", Font.PLAIN, 15));
         filterPanel.add(c);
 
-        checkBoxPower.setBounds(40, 210, 100, 15);
+        checkBoxPower.setBounds(40, 250, 100, 15);
         checkBoxLargeDesk = new JCheckBox("机が広い");
-        checkBoxLargeDesk.setBounds(140, 210, 100, 15);
+        checkBoxLargeDesk.setBounds(140, 250, 100, 15);
 
         filterPanel.add(checkBox52);
         filterPanel.add(checkBox53);
@@ -168,7 +168,7 @@ public class EnhancedFilterTableExample {
         // 検索
         // 検索ボタンの作成
         searchButton = new JButton("Search");
-        searchButton.setBounds(500, 200, 100, 50);
+        searchButton.setBounds(500, 250, 100, 50);
         filterPanel.add(searchButton);
 
         // 検索ボタンにアクションリスナーを追加
@@ -178,11 +178,54 @@ public class EnhancedFilterTableExample {
             }
         });
 
+        // 追加ボタンの作成
+        addroomButton = new JButton("追加");
+        addroomButton.setBounds(40, 120, 100, 100);
+        sidePanel.add(addroomButton);
+
+        // 追加ボタンにアクションリスナーを追加
+        addroomButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showFilteredResults(); // フィルタ結果を表示
+            }
+        });
+
+        // 時間ボタンの作成
+        timeButton = new JButton(getCurrentDateTime() + " - " + getCurrentTimeSlot());
+        timeButton.setBounds(100, 50, 600, 50);
+        timePanel.add(timeButton);
+
+        timeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String currentTimeSlot = getCurrentTimeSlot();
+                if (!currentTimeSlot.equals("お休み")) {
+                    showFilteredResultsForTimeSlot(currentTimeSlot); // 現在の時限でフィルタリング
+                } else {
+                    JOptionPane.showMessageDialog(frame, "お休みです");
+                }
+            }
+        });
+
         // フレームにフィルタパネルとスクロールペインを追加
         filterPanel.setBounds(0, 200, 700, 500);
         frame.add(filterPanel);
-        // frame.add(scrollPane, BorderLayout.CENTER);
+        sidePanel.setBounds(700, 200, 300, 500);
+        frame.add(sidePanel);
+        timePanel.setBounds(0, 0, 1000, 200);
+        frame.add(timePanel);
+
+        // ウィンドウのサイズ変更イベントをリスナーで検知してボタンのサイズと位置を調整
+        frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                resizeComponents();
+            }
+        });
+
         frame.setVisible(true);
+
+        startButtonUpdateTimer(timeButton);
+
     }
 
     private void showFilteredResults() {
@@ -248,6 +291,40 @@ public class EnhancedFilterTableExample {
         displayInNewWindow(filteredData);
     }
 
+    private void showFilteredResultsForTimeSlot(String timeSlot) {
+        filters = new ArrayList<>();
+
+        // 曜日と時間のフィルタ条件を追加
+        String selectedDay = new SimpleDateFormat("EEEE").format(new Date()); // 現在の曜日を取得
+        List<RowFilter<Object, Object>> timeFilters = new ArrayList<>();
+        timeFilters.add(RowFilter.regexFilter(selectedDay + timeSlot, 4));
+
+        if (!timeFilters.isEmpty()) {
+            filters.add(RowFilter.andFilter(timeFilters));
+        }
+
+        // 複数のフィルタを結合
+        RowFilter<Object, Object> compoundRowFilter = RowFilter.andFilter(filters);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
+        sorter.setRowFilter(compoundRowFilter);
+
+        // フィルタされたデータを収集
+        List<Object[]> filteredData = new ArrayList<>();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (sorter.getViewRowCount() > i) {
+                int modelRow = sorter.convertRowIndexToModel(i);
+                Object[] row = new Object[model.getColumnCount()];
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    row[j] = model.getValueAt(modelRow, j);
+                }
+                filteredData.add(row);
+            }
+        }
+
+        // フィルタ結果を新しいウィンドウに表示
+        displayInNewWindow(filteredData);
+    }
+
     private void displayInNewWindow(List<Object[]> filteredData) {
         // 新しいフレームの作成
         JFrame resultFrame = new JFrame("Filtered Results");
@@ -286,6 +363,71 @@ public class EnhancedFilterTableExample {
 
         // メインフレームを非表示にする
         frame.setVisible(false);
+    }
+
+    private String getCurrentDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return dateFormat.format(new Date());
+    }
+
+    private String getCurrentTimeSlot() {
+        // 現在の日時を取得
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        // 日曜日かどうかをチェック
+        if (dayOfWeek == Calendar.SUNDAY) {
+            return "お休み";
+        }
+
+        // 現在の時間を分単位に変換
+        int totalMinutes = hour * 60 + minute;
+
+        // 時限の判定
+        if (totalMinutes >= 530 && totalMinutes < 630) { // 8:50 - 10:30
+            return "1限";
+        } else if (totalMinutes >= 630 && totalMinutes < 740) { // 10:30 - 12:20
+            return "2限";
+        } else if (totalMinutes >= 740 && totalMinutes < 890) { // 12:20 - 14:50
+            return "3限";
+        } else if (totalMinutes >= 890 && totalMinutes < 1005) { // 14:50 - 16:45
+            return "4限";
+        } else if (totalMinutes >= 1005 && totalMinutes < 1120) { // 16:45 - 18:40
+            return "5限";
+        } else if (totalMinutes >= 1120 && totalMinutes < 1235) { // 18:40 - 20:35
+            return "6限";
+        } else if (totalMinutes >= 1245 && totalMinutes < 1295) { // 20:45 - 21:35
+            return "7限";
+        } else {
+            return "お休み";
+        }
+    }
+
+    private void startButtonUpdateTimer(JButton button) {
+        Timer timer = new Timer(60000, new ActionListener() { // 1分ごとに更新
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (button == timeButton) {
+                    button.setText(getCurrentDateTime() + " - " + getCurrentTimeSlot()); // ボタンに現在の日付と時限を設定
+                }
+            }
+        });
+        timer.setInitialDelay(0); // タイマーの初期遅延を0ミリ秒に設定
+        timer.start();
+    }
+
+    private void resizeComponents() {
+        // フレームの新しいサイズを取得
+        int width = frame.getWidth();
+        int height = frame.getHeight();
+
+        timePanel.setBounds(0, 0, width, height / 3);
+        timeButton.setBounds(width / 4, height / 12, width / 2, height / 6);
+        filterPanel.setBounds(0, height / 3, width * 2 / 3, height * 2 / 3);
+        sidePanel.setBounds(width * 2 / 3, height / 3, width / 3, height * 2 / 3);
+        addroomButton.setBounds(width / 9, 100, 100, 100);
     }
 
     public static void main(String[] args) {
