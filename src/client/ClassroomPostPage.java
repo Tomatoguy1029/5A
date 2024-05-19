@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Post_screen extends JFrame {
+public class ClassroomPostPage extends JFrame {
     private JComboBox<String> buildingComboBox;
     private JTextField roomField;
     private JButton submitButton;
@@ -13,7 +13,7 @@ public class Post_screen extends JFrame {
     private JSlider congestionSlider;
     private JSlider internetSlider;
 
-    public Post_screen() {
+    public ClassroomPostPage() {
         setTitle("投稿");
         setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -114,7 +114,7 @@ public class Post_screen extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Post_screen post = new Post_screen();
+                ClassroomPostPage post = new ClassroomPostPage();
                 post.setVisible(true);
             }
         });
