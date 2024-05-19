@@ -26,7 +26,7 @@ public class ClassroomService {
             pstmt.executeUpdate();// SQLクエリを実行。実行するとデータベースにデータが登録される
             System.out.println("Insert completed with UUID: " + uniqueId);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
