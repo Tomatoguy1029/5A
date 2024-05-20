@@ -1,4 +1,3 @@
-//クライアントとの通信を担当するスレッドを作成し、クライアントからのリクエストを処理する
 package src.server;
 
 import java.io.*;
