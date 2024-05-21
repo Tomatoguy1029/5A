@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class Client {
+public class Main {
     public static int PORT = 8080;
     public static int mode = 0;
 

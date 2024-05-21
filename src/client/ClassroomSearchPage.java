@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 
-public class EnhancedFilterTableExample extends JFrame {
+public class ClassroomSearchPage extends JFrame {
     private JFrame frame;
     private JPanel filterPanel, sidePanel, timePanel;
     public DefaultTableModel model;
@@ -25,7 +25,7 @@ public class EnhancedFilterTableExample extends JFrame {
 
     private JLabel time, a, b, c;
 
-    public EnhancedFilterTableExample() {
+    public ClassroomSearchPage() {
         initializeFrame();
         initializePanels();
         initializeLabels();
@@ -319,7 +319,7 @@ public class EnhancedFilterTableExample extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new EnhancedFilterTableExample();
+                new ClassroomSearchPage();
             }
         });
     }
