@@ -16,7 +16,6 @@ import javax.swing.Timer;
 public class EnhancedFilterTableExample extends JFrame {
     private JFrame frame;
     private JPanel filterPanel, sidePanel, timePanel;
-    private JTable table;
     private DefaultTableModel model;
     private JCheckBox checkBox52, checkBox53, checkBox54, checkBox63;
     private JCheckBox checkBoxPower, checkBoxLargeDesk;
