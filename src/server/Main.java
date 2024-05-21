@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.concurrent.CompletableFuture;
 
-public class Server {
+public class Main {
     public static int PORT = 8080;
 
     public static void main(String[] args) throws IOException {
