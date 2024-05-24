@@ -14,7 +14,7 @@ import java.util.Calendar;
 public class ClassroomSearchPage extends JFrame {
     private JFrame frame;
     private JPanel filterPanel, sidePanel, timePanel;
-    public DefaultTableModel model;
+    private DefaultTableModel model;
     private JCheckBox checkBox52, checkBox53, checkBox54, checkBox63;
     private JCheckBox checkBoxPower, checkBoxLargeDesk;
     private JComboBox<String> dayComboBox;
@@ -122,7 +122,7 @@ public class ClassroomSearchPage extends JFrame {
     }
 
     private void initializeButtons() {// ボタンの初期化
-        searchButton = new JButton("Search");
+        searchButton = new JButton("検索");
         searchButton.setBounds(500, 250, 100, 50);
         filterPanel.add(searchButton);
         searchButton.addActionListener(new ActionListener() {
