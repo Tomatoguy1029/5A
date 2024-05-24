@@ -1,100 +1,86 @@
-//クライアントとの通信を担当するスレッドを作成し、クライアントからのリクエストを処理する
 package src.server;
 
-import java.io.*;
-import java.net.*;
-import java.util.concurrent.CompletableFuture;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Server {
-    public static int PORT = 8080;
+    private static final String DB_URL = "jdbc:sqlite:/Users/aipon/Works/5A/classrooms.db";
 
-    public static void main(String[] args) throws IOException {
-        if (args.length > 0 && args[0] != null) {
-            int num = Integer.parseInt(args[0]);
-            if (num > 0 && num < 65536) {
-                PORT = num;
-            } else {
-                System.out.println("Invalid port number.");
-            }
-        }
-        ServerSocket s = new ServerSocket(PORT); // ソケットを作成する
-        System.out.println("Started: " + s);
+    public static void main(String[] args) {
         try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            System.err.println("SQLite JDBC Driver not found.");
+            e.printStackTrace();
+            return;
+        }
+
+        try (ServerSocket serverSocket = new ServerSocket(12345)) {
+            System.out.println("Server is listening on port 12345");
             while (true) {
-                Socket socket = s.accept(); // コネクション設定要求を待つ
-                new Thread(new ClientHandler(socket)).start();
+                try (Socket socket = serverSocket.accept()) {
+                    System.out.println("New client connected");
+
+                    InputStream input = socket.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+                    OutputStream output = socket.getOutputStream();
+                    PrintWriter writer = new PrintWriter(output, true);
+
+                    writer.println("Choose mode: search");
+                    String userMode = reader.readLine();
+
+                    if ("search".equals(userMode)) {
+                        writer.println("Enter classroom name:");
+                        String classroomName = reader.readLine();
+                        System.out.println("Client requested classroom: " + classroomName);
+
+                        String classroomInfo = getClassroomInfoFromDatabase(classroomName);
+                        writer.println(classroomInfo);
+                    } else {
+                        writer.println("Invalid mode.");
+                    }
+                }
             }
-        } finally {
-            s.close();
+        } catch (IOException ex) {
+            System.out.println("Server exception: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
-    private static class ClientHandler implements Runnable {
-        private Socket socket;
-        public BufferedReader in;
-        public PrintWriter out;
-        private AddClassroomInfo addCInfo = new AddClassroomInfo();
+    private static String getClassroomInfoFromDatabase(String classroomName) {
+        String info = "Classroom not found.";
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            System.out.println("Connected to the database.");
 
-        // クライアントとの通信を担当するスレッド
-        public ClientHandler(Socket socket) {
-            this.socket = socket;
-            try {
-                this.in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // データ受信用バッファの設定
-                this.out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true); // 送信バッファ設定
-            } catch (IOException e) {
-                System.err.println("Error setting up streams: " + e.getMessage());
-            }
-        }
-
-        @Override
-        public void run() {
-            try {
-                System.out.println("Connection accepted: " + socket);
-                while (true) {
-                    String str = in.readLine(); // データの受信
-                    if (str.equals("END")) {
-                        break;
+            String sql = "SELECT info FROM classrooms WHERE name = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, classroomName);
+                System.out.println("Executing query: " + sql + " with parameter: " + classroomName);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        info = rs.getString("info");
+                        System.out.println("Found classroom info: " + info);
                     } else {
-                        try {
-                            int mode = Integer.parseInt(str);
-                            handleMode(mode);
-                        } catch (NumberFormatException e) {
-                            out.println("Invalid input. Please enter a number (1 or 2):");
-                        }
+                        System.out.println("Classroom not found in the database.");
                     }
                 }
-            } catch (IOException e) {
-                System.err.println("Connection error: " + e.getMessage());
-            } finally {
-                try {
-                    System.out.println("closing...");
-                    socket.close();
-                } catch (IOException e) {
-                    System.err.println("Error closing socket: " + e.getMessage());
-                }
             }
+        } catch (SQLException e) {
+            System.err.println("SQLException: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        private String handleMode(int mode) throws IOException {
-            switch (mode) {
-                case 1:
-                    return handleAddClassroomInfo();
-                case 2:
-                    return handlePostClassroomStatus();
-                default:
-                    System.out.println("Invalid mode.");
-                    return "Invalid mode.";
-            }
-        }
-
-        private String handleAddClassroomInfo() throws IOException {
-            addCInfo.addInfoAsync(in, out); 
-            return "Classroom info added.";
-        }
-
-        private String handlePostClassroomStatus() throws IOException {
-            out.println("Classroom status posted.");
-            return "Classroom status posted.";
-        }
+        return info;
     }
 }

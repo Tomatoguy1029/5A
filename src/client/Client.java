@@ -1,63 +1,53 @@
 package src.client;
 
-import java.io.*;
-import java.net.*;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client {
-    public static int PORT = 8080;
-    public static int mode = 0;
+    public static void main(String[] args) {
+        String hostname = "localhost";
+        int port = 12345;
 
-    public static void main(String[] args)
-            throws IOException {
-        InetAddress addr = InetAddress.getByName("localhost");// IP アドレスへの変換
-        Scanner scanner = new Scanner(System.in); // ユーザー入力を読み取るためのScanner
-        System.out.println("selected mode:(1)edit classroom info, (2)post classroom status");
+        try (Socket socket = new Socket(hostname, port)) {
+            InputStream input = socket.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-        // ユーザーからのモード選択の取得
-        System.out.println("Enter mode (1 or 2):");
-        System.out.println("Type 'END' to disconnect:");
+            OutputStream output = socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(output, true);
 
-        System.out.println("addr = " + addr);
-        try (Socket socket = new Socket(addr, PORT)) {
-            System.out.println("socket = " + socket);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            socket.getInputStream())); // データ受信用バッファの設定
-            PrintWriter out = new PrintWriter(
-                    new BufferedWriter(
-                            new OutputStreamWriter(
-                                    socket.getOutputStream())),
-                    true); // 送信バッファ設定
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
-            while (true) {
-                String input = scanner.nextLine();
-                try {
+            String serverMessage = reader.readLine();
+            System.out.println("Server: " + serverMessage);
 
-                    if ("END".equalsIgnoreCase(input)) {
-                        out.println("END");
-                        break;
-                    } else {
-                        mode = Integer.parseInt(input);
-                        if (mode == 1 || mode == 2) {
-                            // モードをサーバーに送信
-                            out.println(mode);
-                            // サーバーからの応答を受け取る
-                            String response = in.readLine();
-                            System.out.println("Server response: " + response);
-                        } else {
-                            System.out.println("Invalid mode. Please enter 1 or 2:");
-                        }
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number (1 or 2):");
-                }
+            // モード選択
+            String userMode = consoleReader.readLine();
+            writer.println(userMode);
+
+            // サーバーからの最終応答
+            serverMessage = reader.readLine();
+            System.out.println("Server: " + serverMessage);
+
+            if ("search".equals(userMode)) {
+                // 教室名を入力
+                String classroomName = consoleReader.readLine();
+                writer.println(classroomName);
+
+                // サーバーからの最終応答
+                serverMessage = reader.readLine();
+                System.out.println("Server: " + serverMessage);
             }
 
-        } finally {
-            System.out.println("closing...");
-            scanner.close();
+        } catch (UnknownHostException ex) {
+            System.out.println("Server not found: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("I/O error: " + ex.getMessage());
         }
     }
-
 }
