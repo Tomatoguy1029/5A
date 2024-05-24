@@ -1,6 +1,8 @@
 package src.client;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +10,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Calendar;
 
 public class ClassroomSearchPage extends JFrame {
@@ -30,7 +33,6 @@ public class ClassroomSearchPage extends JFrame {
         initializeFilters();
         initializeButtons();
         initializeResizeListener();
-
         frame.setVisible(true);
         TimeUpdate(time);
     }
@@ -125,8 +127,9 @@ public class ClassroomSearchPage extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Search search = new Search();
-                search.showFilteredResults(checkBox52, checkBox53, checkBox54, checkBox63, checkBoxPower,
+                List<Object[]> filteredData = search.showFilteredResults(checkBox52, checkBox53, checkBox54, checkBox63, checkBoxPower,
                         checkBoxLargeDesk, dayComboBox, timeCheckBoxes);
+                displayInNewWindow(filteredData);
             }
         });
 
@@ -136,8 +139,9 @@ public class ClassroomSearchPage extends JFrame {
         addroomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Search search = new Search();
-                search.showFilteredResults(checkBox52, checkBox53, checkBox54, checkBox63, checkBoxPower,
+                List<Object[]> filteredData = search.showFilteredResults(checkBox52, checkBox53, checkBox54, checkBox63, checkBoxPower,
                         checkBoxLargeDesk, dayComboBox, timeCheckBoxes);
+                displayInNewWindow(filteredData);
             }
         });
 
@@ -149,16 +153,15 @@ public class ClassroomSearchPage extends JFrame {
                 String currentTimeSlot = getCurrentTimeSlot();
                 if (!currentTimeSlot.equals("お休み")) {
                     Search search = new Search();
-                    search.showFilteredResultsForTimeSlot(checkBox52, checkBox53, checkBox54, checkBox63,
+                    List<Object[]> filteredData = search.showFilteredResultsForTimeSlot(checkBox52, checkBox53, checkBox54, checkBox63,
                             checkBoxPower, checkBoxLargeDesk, currentTimeSlot);
+                    displayInNewWindow(filteredData);
                 } else {
                     JOptionPane.showMessageDialog(frame, "お休みです");
                 }
             }
         });
     }
-
-    
 
     private void initializeResizeListener() {// ウィンドウサイズの変更を検知するリスナーの初期化
         frame.addComponentListener(new ComponentAdapter() {
@@ -228,6 +231,37 @@ public class ClassroomSearchPage extends JFrame {
         });
         timer.setInitialDelay(0);
         timer.start();
+    }
+
+    private void displayInNewWindow(List<Object[]> filteredData) {
+        JFrame resultFrame = new JFrame("Filtered Results");
+        resultFrame.setSize(800, 600);
+
+        String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size" };
+        DefaultTableModel filteredModel = new DefaultTableModel(columnNames, 0);
+
+        for (Object[] row : filteredData) {
+            Object[] newRow = new Object[5];
+            for (int j = 0; j < newRow.length; j++) {
+                newRow[j] = row[j];
+            }
+            filteredModel.addRow(newRow);
+        }
+
+        JTable filteredTable = new JTable(filteredModel);
+        JScrollPane scrollPane = new JScrollPane(filteredTable);
+
+        JButton backButton = new JButton("戻る");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resultFrame.dispose();
+            }
+        });
+
+        resultFrame.add(scrollPane, BorderLayout.CENTER);
+        resultFrame.add(backButton, BorderLayout.SOUTH);
+        resultFrame.setVisible(true);
     }
 
     public static void main(String[] args) {

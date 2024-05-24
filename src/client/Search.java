@@ -2,9 +2,6 @@ package src.client;
 
 import javax.swing.*;
 import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,9 +15,10 @@ public Search(){
     initializeTableModel();
 }
 
-    public void showFilteredResults(JCheckBox checkBox52, JCheckBox checkBox53,
+    public List<Object[]> showFilteredResults(JCheckBox checkBox52, JCheckBox checkBox53,
             JCheckBox checkBox54, JCheckBox checkBox63, JCheckBox checkBoxPower, JCheckBox checkBoxLargeDesk,
             JComboBox<String> dayComboBox, JCheckBox[] timeCheckBoxes) {
+
         List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
         List<RowFilter<Object, Object>> locationFilters = new ArrayList<>();
@@ -74,10 +72,10 @@ public Search(){
             }
         }
 
-        displayInNewWindow(filteredData);
+        return filteredData;
     }
 
-    public void showFilteredResultsForTimeSlot(JCheckBox checkBox52, JCheckBox checkBox53,
+    public List<Object[]> showFilteredResultsForTimeSlot(JCheckBox checkBox52, JCheckBox checkBox53,
             JCheckBox checkBox54, JCheckBox checkBox63, JCheckBox checkBoxPower, JCheckBox checkBoxLargeDesk,
             String timeSlot) {
         List<RowFilter<Object, Object>> filters = new ArrayList<>();
@@ -130,39 +128,10 @@ public Search(){
             }
         }
 
-        displayInNewWindow(filteredData);
+        return filteredData;
     }
 
-    private void displayInNewWindow(List<Object[]> filteredData) {
-        JFrame resultFrame = new JFrame("Filtered Results");
-        resultFrame.setSize(800, 600);
-
-        String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size" };
-        DefaultTableModel filteredModel = new DefaultTableModel(columnNames, 0);
-
-        for (Object[] row : filteredData) {
-            Object[] newRow = new Object[5];
-            for (int j = 0; j < newRow.length; j++) {
-                newRow[j] = row[j];
-            }
-            filteredModel.addRow(newRow);
-        }
-
-        JTable filteredTable = new JTable(filteredModel);
-        JScrollPane scrollPane = new JScrollPane(filteredTable);
-
-        JButton backButton = new JButton("戻る");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resultFrame.dispose();
-            }
-        });
-
-        resultFrame.add(scrollPane, BorderLayout.CENTER);
-        resultFrame.add(backButton, BorderLayout.SOUTH);
-        resultFrame.setVisible(true);
-    }
+    
 
     private void initializeTableModel() {// データの初期化 TODO: データをサーバーから取得
         String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size", "Available", "Edit" };
