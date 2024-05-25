@@ -2,16 +2,15 @@ package src.client;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Calendar;
 
 public class ClassroomSearchPage extends JFrame {
     private JFrame frame;
@@ -21,10 +20,10 @@ public class ClassroomSearchPage extends JFrame {
     private JComboBox<String> dayComboBox;
     private JCheckBox[] timeCheckBoxes;
     private JButton searchButton;
-    private JButton addroomButton;
+    private JButton addRoomButton;
     private JButton timeButton;
 
-    private JLabel time, a, b, c;
+    private JLabel time;
 
     public ClassroomSearchPage() {
         initializeFrame();
@@ -64,27 +63,27 @@ public class ClassroomSearchPage extends JFrame {
     private void initializeLabels() {// ラベルの初期化
         time = new JLabel(getCurrentDateTime() + " - " + getCurrentTimeSlot());
         time.setBounds(50, 5, 300, 20);
-        time.setFont(new Font("Arial", Font.PLAIN, 40));
+        time.setFont(new Font("Serif", Font.PLAIN, 40));
         timePanel.add(time);
 
-        a = new JLabel("教室検索");
-        a.setBounds(50, 10, 300, 20);
-        a.setFont(new Font("Arial", Font.PLAIN, 20));
+        JLabel a = new JLabel("教室検索");
+        a.setBounds(40, 10, 300, 20);
+        a.setFont(new Font("Serif", Font.PLAIN, 20));
         filterPanel.add(a);
 
-        b = new JLabel("場所");
+        JLabel b = new JLabel("場所");
         b.setBounds(40, 140, 300, 20);
-        b.setFont(new Font("Arial", Font.PLAIN, 15));
+        b.setFont(new Font("Serif", Font.PLAIN, 15));
         filterPanel.add(b);
 
-        c = new JLabel("条件");
+        JLabel c = new JLabel("条件");
         c.setBounds(40, 220, 300, 20);
-        c.setFont(new Font("Arial", Font.PLAIN, 15));
+        c.setFont(new Font("Serif", Font.PLAIN, 15));
         filterPanel.add(c);
     }
 
     private void initializeFilters() {// フィルターの初期化
-        dayComboBox = new JComboBox<>(new String[] { "月曜", "火曜", "水曜", "木曜", "金曜", "土曜" });
+        dayComboBox = new JComboBox<>(new String[]{"月曜", "火曜", "水曜", "木曜", "金曜", "土曜"});
         dayComboBox.setBounds(40, 40, 100, 25);
         filterPanel.add(dayComboBox);
 
@@ -133,15 +132,12 @@ public class ClassroomSearchPage extends JFrame {
             }
         });
 
-        addroomButton = new JButton("投稿");
-        addroomButton.setBounds(50, 120, 100, 100);
-        sidePanel.add(addroomButton);
-        addroomButton.addActionListener(new ActionListener() {
+        addRoomButton = new JButton("投稿");
+        addRoomButton.setBounds(50, 120, 100, 100);
+        sidePanel.add(addRoomButton);
+        addRoomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Search search = new Search();
-                List<Object[]> filteredData = search.showFilteredResults(checkBox52, checkBox53, checkBox54, checkBox63, checkBoxPower,
-                        checkBoxLargeDesk, dayComboBox, timeCheckBoxes);
-                displayInNewWindow(filteredData);
+                new ClassroomPostPage();
             }
         });
 
@@ -181,7 +177,7 @@ public class ClassroomSearchPage extends JFrame {
         timeButton.setBounds(width * 3 / 8, height * 4 / 17, width / 4, height / 15);
         filterPanel.setBounds(width / 3, height / 3, width * 2 / 3, height * 2 / 3);
         sidePanel.setBounds(0, height / 3, width / 3, height * 2 / 3);
-        addroomButton.setBounds(width / 9, 100, 100, 100);
+        addRoomButton.setBounds(width / 9, 100, 100, 100);
     }
 
     private String getCurrentDateTime() {// 現在の日時を取得
@@ -237,8 +233,13 @@ public class ClassroomSearchPage extends JFrame {
         JFrame resultFrame = new JFrame("Filtered Results");
         resultFrame.setSize(800, 600);
 
-        String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size" };
-        DefaultTableModel filteredModel = new DefaultTableModel(columnNames, 0);
+        String[] columnNames = {"Name", "Location", "Seats", "Outlets", "Desk Size"};
+        DefaultTableModel filteredModel = new DefaultTableModel(columnNames, 0){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
 
         for (Object[] row : filteredData) {
             Object[] newRow = new Object[5];
@@ -272,3 +273,9 @@ public class ClassroomSearchPage extends JFrame {
         });
     }
 }
+
+
+//TODO: 投稿画面に戻るボタンを付ける
+//TODO: PostPageを別のファイルへ分ける
+//TODO: oo-oooという選択形式にする
+//TODO: 編集できないようにする

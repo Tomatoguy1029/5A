@@ -6,43 +6,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ClassroomPostPage extends JFrame {
-    private JComboBox<String> buildingComboBox;
-    private JTextField roomField;
-    private JButton submitButton;
+    private JFrame Postframe;
+    private JPanel inputPanel;
+    private JComboBox<String> roomComboBox;
+    private JButton submitButton, returnButton;
     private JTextArea resultArea;
     private JSlider congestionSlider;
     private JSlider internetSlider;
 
     public ClassroomPostPage() {
-        setTitle("投稿");
-        setSize(400, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // レイアウトの設定
-        setLayout(new BorderLayout());
+        Postframe = new JFrame("投稿画面");
+        Postframe.setSize(400, 500);
+        Postframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // 入力パネルの作成
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridBagLayout());
+        inputPanel = new JPanel(new GridBagLayout());
+        Postframe.add(inputPanel, BorderLayout.NORTH);
+
+        //GridBagContraintsの導入
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // 余白を設定
+        gbc.fill = GridBagConstraints.HORIZONTAL; // コンポーネントが余白を埋めるようにする
+
+
+        // 「教室」ラベルの作成
+        JLabel roomLabel = new JLabel("教室");
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(5, 5, 5, 5); // 余白を設定
-
-        // 号館選択リストの作成
-        String[] buildings = {"","52号館", "53号館", "54号館", "63号館"};
-        buildingComboBox = new JComboBox<>(buildings);
-        inputPanel.add(buildingComboBox, gbc);
-
-        // 「号室」テキストフィールドの作成
-        gbc.gridx = 1;
-        roomField = new JTextField(5); // 10はテキストフィールドの幅を示します
-        inputPanel.add(roomField, gbc);
-
-        // 「号室」ラベルの作成
-        JLabel roomLabel = new JLabel("号室");
-        gbc.gridx = 2;
+        gbc.gridwidth = 1;
         inputPanel.add(roomLabel, gbc);
+
+        // 教室選択リストの作成
+        String[] rooms = getClassroomName();
+        roomComboBox = new JComboBox<>(rooms);
+        gbc.gridx = 1;
+        inputPanel.add(roomComboBox, gbc);
 
         // 混雑度ラベルの作成
         gbc.gridx = 0;
@@ -64,7 +62,7 @@ public class ClassroomPostPage extends JFrame {
         // ネット環境ラベルの作成
         gbc.gridy = 3;
         gbc.gridwidth = 2; // 2列分の幅を持つ
-        JLabel internetLabel = new JLabel("ネット環境の良さ");
+        JLabel internetLabel = new JLabel("ネット環境");
         inputPanel.add(internetLabel, gbc);
 
         // ネット環境スライダーの作成
@@ -77,45 +75,69 @@ public class ClassroomPostPage extends JFrame {
         internetSlider.setPaintLabels(true); // ラベルを描画する
         inputPanel.add(internetSlider, gbc);
 
+        //ボタンの作成
+        gbc.gridwidth = 1; // 1列分の幅を持つ
+
         // 投稿ボタンの作成
         gbc.gridy = 5;
-        gbc.gridwidth = 1; // 2列分の幅を持つ
         submitButton = new JButton("投稿");
+        inputPanel.add(submitButton, gbc);
+
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 performSearch();
             }
         });
-        inputPanel.add(submitButton, gbc);
-
-        add(inputPanel, BorderLayout.NORTH);
 
         // 検索結果表示エリアの作成
         resultArea = new JTextArea();
         resultArea.setEditable(false);
+        String defaultText = "投稿内容:\n\nまだ何も投稿されていません。\n";
+        resultArea.setText(defaultText);
         JScrollPane scrollPane = new JScrollPane(resultArea);
-        add(scrollPane, BorderLayout.CENTER);
+        Postframe.add(scrollPane, BorderLayout.CENTER);
+
+        //戻るボタンの作成
+        returnButton = new JButton("戻る");
+        returnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Postframe.dispose();
+            }
+        });
+        Postframe.add(returnButton, BorderLayout.SOUTH);
+
+        Postframe.setVisible(true);
     }
 
     private void performSearch() {
         // ここに検索ロジックを実装する
-        String building = (String) buildingComboBox.getSelectedItem();
-        String room = roomField.getText();
+        String room = (String) roomComboBox.getSelectedItem();
         int congestionLevel = congestionSlider.getValue();
         int internetLevel = internetSlider.getValue();
-        String searchText = building + room + "号室\n混雑度: " + congestionLevel + "\nネット環境: " + internetLevel;
-        // 仮の検索結果
-        String newresult = "投稿内容:\n\n " + searchText + "\n\nご協力ありがとうございました。\n\n";
-        resultArea.append(newresult);
+        String searchText = room + "\n混雑度: " + congestionLevel + "\nネット環境: " + internetLevel;
+        // 投稿内容の表示
+        String result = "投稿内容:\n\n " + searchText + 
+                            "\n\nご協力ありがとうございました。\n" + 
+                            "「戻る」ボタンを押して検索画面へお戻りください。\n";
+        resultArea.setText(result);
+
+        submitButton.setVisible(false);
     }
 
+    private String[] getClassroomName(){
+        Object[][] info = new SampleData().getSampleData();
+        String[] ClassroomName = new String[info.length];
+        for (int i=0; i<info.length;i++){
+            ClassroomName[i] = (String)info[i][0];
+        }
+        return ClassroomName;
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
-            @Override
             public void run() {
-                ClassroomPostPage post = new ClassroomPostPage();
-                post.setVisible(true);
+                new ClassroomPostPage();
             }
         });
     }
