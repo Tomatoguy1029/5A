@@ -131,8 +131,6 @@ public Search(){
         return filteredData;
     }
 
-    
-
     private void initializeTableModel() {// データの初期化 TODO: データをサーバーから取得
         String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size", "Available", "Edit" };
         Object[][] data = getSampleData();
