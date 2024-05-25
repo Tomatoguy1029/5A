@@ -273,9 +273,3 @@ public class ClassroomSearchPage extends JFrame {
         });
     }
 }
-
-
-//TODO: 投稿画面に戻るボタンを付ける
-//TODO: PostPageを別のファイルへ分ける
-//TODO: oo-oooという選択形式にする
-//TODO: 編集できないようにする
