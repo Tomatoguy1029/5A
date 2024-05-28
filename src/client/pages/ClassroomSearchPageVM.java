@@ -51,6 +51,7 @@ public class ClassroomSearchPageVM {
 
         page.addroomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                new ClassroomPostPage();
                 try {
                     query.setType(QueryType.ADD_CLASSROOM_INFO);
                     // クエリのパラメータを設定

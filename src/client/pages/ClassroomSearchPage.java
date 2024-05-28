@@ -68,16 +68,16 @@ public class ClassroomSearchPage extends JFrame {
 
     public void initializeLabels() {
         this.time = new JLabel(day.formatCurrentDateTime());
-        this.time.setFont(new Font("Arial", Font.PLAIN, 40));
+        this.time.setFont(new Font("Serif", Font.PLAIN, 40));
 
         this.a = new JLabel("教室検索");
-        this.a.setFont(new Font("Arial", Font.PLAIN, 20));
+        this.a.setFont(new Font("Serif", Font.PLAIN, 20));
 
         this.b = new JLabel("場所");
-        this.b.setFont(new Font("Arial", Font.PLAIN, 15));
+        this.b.setFont(new Font("Serif", Font.PLAIN, 15));
 
         this.c = new JLabel("条件");
-        this.c.setFont(new Font("Arial", Font.PLAIN, 15));
+        this.c.setFont(new Font("Serif", Font.PLAIN, 15));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;

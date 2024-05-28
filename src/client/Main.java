@@ -13,11 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         InetAddress addr = InetAddress.getByName("localhost");// IP アドレスへの変換
         Scanner scanner = new Scanner(System.in); // ユーザー入力を読み取るためのScanner
-        System.out.println("selected mode:(1)edit classroom info, (2)post classroom status");
-
-        // ユーザーからのモード選択の取得
-        System.out.println("Enter mode (1 or 2):");
-        System.out.println("Type 'END' to disconnect:");
+        //System.out.println("selected mode:(1)edit classroom info, (2)post classroom status");
 
         System.out.println("addr = " + addr);
         try (Socket socket = new Socket(addr, PORT)) {
@@ -30,6 +26,14 @@ public class Main {
                             new OutputStreamWriter(
                                     socket.getOutputStream())),
                     true); // 送信バッファ設定
+            
+            // ユーザーからのモード選択の取得
+            //System.out.println("Enter mode (1 or 2):");
+
+            // 検索クエリの作成
+            new ClassroomSearchPage();
+            
+            System.out.println("Type 'END' to disconnect:");
 
             while (true) {
                 String input = scanner.nextLine();
@@ -42,10 +46,6 @@ public class Main {
                         if (mode == 1 || mode == 2) {
                             // モードをサーバーに送信
                             out.println(mode);
-
-                            // 検索クエリの作成
-                            ClassroomSearchPage searchPage = new ClassroomSearchPage();
-
                             // サーバーからの応答を受け取る
                             String response = in.readLine();
                             System.out.println("Server response: " + response);

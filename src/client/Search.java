@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import src.client.pages.Sample;
+
 public class Search {
     private DefaultTableModel model;
 
@@ -132,7 +134,7 @@ public class Search {
 
     private void initializeTableModel() {// データの初期化 TODO: データをサーバーから取得
         String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size", "Available", "Edit" };
-        Object[][] data = new SampleData().getSampleData();
+        Object[][] data = new Sample().getSampleData();
         model = new DefaultTableModel(data, columnNames);
     }
     

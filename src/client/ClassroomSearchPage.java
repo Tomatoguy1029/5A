@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import src.client.pages.ClassroomPostPage;
+
 public class ClassroomSearchPage extends JFrame {
     private JFrame frame;
     private JPanel filterPanel, sidePanel, timePanel;
