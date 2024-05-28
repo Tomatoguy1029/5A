@@ -1,5 +1,7 @@
 package src.client;
 
+import src.client.pages.ClassroomSearchPage;
+
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
@@ -8,8 +10,7 @@ public class Main {
     public static int PORT = 8080;
     public static int mode = 0;
 
-    public static void main(String[] args)
-            throws IOException {
+    public static void main(String[] args) throws IOException {
         InetAddress addr = InetAddress.getByName("localhost");// IP アドレスへの変換
         Scanner scanner = new Scanner(System.in); // ユーザー入力を読み取るためのScanner
         System.out.println("selected mode:(1)edit classroom info, (2)post classroom status");
@@ -33,7 +34,6 @@ public class Main {
             while (true) {
                 String input = scanner.nextLine();
                 try {
-
                     if ("END".equalsIgnoreCase(input)) {
                         out.println("END");
                         break;
@@ -42,6 +42,10 @@ public class Main {
                         if (mode == 1 || mode == 2) {
                             // モードをサーバーに送信
                             out.println(mode);
+
+                            // 検索クエリの作成
+                            ClassroomSearchPage searchPage = new ClassroomSearchPage();
+
                             // サーバーからの応答を受け取る
                             String response = in.readLine();
                             System.out.println("Server response: " + response);
@@ -53,11 +57,9 @@ public class Main {
                     System.out.println("Invalid input. Please enter a number (1 or 2):");
                 }
             }
-
         } finally {
             System.out.println("closing...");
             scanner.close();
         }
     }
-
 }

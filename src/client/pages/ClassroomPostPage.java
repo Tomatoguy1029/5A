@@ -1,4 +1,4 @@
-package src.client;
+package src.client.pages;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,7 @@ public class ClassroomPostPage extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5); // 余白を設定
 
         // 号館選択リストの作成
-        String[] buildings = {"","52号館", "53号館", "54号館", "63号館"};
+        String[] buildings = { "", "52号館", "53号館", "54号館", "63号館" };
         buildingComboBox = new JComboBox<>(buildings);
         inputPanel.add(buildingComboBox, gbc);
 
@@ -120,4 +120,3 @@ public class ClassroomPostPage extends JFrame {
         });
     }
 }
-
