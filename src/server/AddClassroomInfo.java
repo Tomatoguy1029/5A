@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.CompletableFuture;
 
-import src.service.ClassroomService;
+import src.server.service.ClassroomService;
 
 public class AddClassroomInfo {
     private static ClassroomService classroomService = new ClassroomService();

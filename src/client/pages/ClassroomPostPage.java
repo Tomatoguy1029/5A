@@ -1,4 +1,4 @@
-package src.client;
+package src.client.pages;
 
 import javax.swing.*;
 import java.awt.*;
@@ -127,7 +127,7 @@ public class ClassroomPostPage extends JFrame {
     }
 
     private String[] getClassroomName(){
-        Object[][] info = new SampleData().getSampleData();
+        Object[][] info = new Sample().getSampleData();
         String[] ClassroomName = new String[info.length];
         for (int i=0; i<info.length;i++){
             ClassroomName[i] = (String)info[i][0];
@@ -142,4 +142,3 @@ public class ClassroomPostPage extends JFrame {
         });
     }
 }
-
