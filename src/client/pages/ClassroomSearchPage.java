@@ -35,8 +35,6 @@ public class ClassroomSearchPage extends JFrame {
         initializeTableModel();
         initializeResizeListener();
 
-        new ClassroomSearchPageVM(this);
-
         frame.setVisible(true);
         day.TimeUpdate(time);
     }

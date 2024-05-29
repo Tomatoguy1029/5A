@@ -1,65 +1,50 @@
 package src.client;
 
 import src.client.pages.ClassroomSearchPage;
+import src.client.pages.ClassroomSearchPageVM;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 public class Main {
     public static int PORT = 8080;
-    public static int mode = 0;
+    public static PrintWriter out;
 
     public static void main(String[] args) throws IOException {
-        InetAddress addr = InetAddress.getByName("localhost");// IP アドレスへの変換
-        Scanner scanner = new Scanner(System.in); // ユーザー入力を読み取るためのScanner
-        System.out.println("selected mode:(1)edit classroom info, (2)post classroom status");
-
-        // ユーザーからのモード選択の取得
-        System.out.println("Enter mode (1 or 2):");
-        System.out.println("Type 'END' to disconnect:");
-
+        InetAddress addr = InetAddress.getByName("localhost");
         System.out.println("addr = " + addr);
+
         try (Socket socket = new Socket(addr, PORT)) {
             System.out.println("socket = " + socket);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            socket.getInputStream())); // データ受信用バッファの設定
-            PrintWriter out = new PrintWriter(
-                    new BufferedWriter(
-                            new OutputStreamWriter(
-                                    socket.getOutputStream())),
-                    true); // 送信バッファ設定
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
+            // ClassroomSearchPageを起動し、クエリを作成する
+            ClassroomSearchPage searchPage = new ClassroomSearchPage();
+            ClassroomSearchPageVM viewModel = ClassroomSearchPageVM.getInstance(searchPage);
+
+            // クエリが生成されるのを待つ
             while (true) {
-                String input = scanner.nextLine();
-                try {
-                    if ("END".equalsIgnoreCase(input)) {
-                        out.println("END");
-                        break;
-                    } else {
-                        mode = Integer.parseInt(input);
-                        if (mode == 1 || mode == 2) {
-                            // モードをサーバーに送信
-                            out.println(mode);
+                String query = viewModel.getGeneratedQuery();
+                System.out.println("Generated query: " + query);
+                if (query != null) {
+                    System.out.println("Sending query: " + query);
+                    out.println(query);// サーバーにクエリを送信
 
-                            // 検索クエリの作成
-                            ClassroomSearchPage searchPage = new ClassroomSearchPage();
-
-                            // サーバーからの応答を受け取る
-                            String response = in.readLine();
-                            System.out.println("Server response: " + response);
-                        } else {
-                            System.out.println("Invalid mode. Please enter 1 or 2:");
-                        }
+                    // サーバーからの応答を受け取る
+                    String response;
+                    while ((response = in.readLine()) != null) {
+                        System.out.println("Server response: " + response);
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number (1 or 2):");
                 }
+
+                // メインスレッドの待機を少し入れる
+                Thread.sleep(1000);
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             System.out.println("closing...");
-            scanner.close();
         }
     }
 }
