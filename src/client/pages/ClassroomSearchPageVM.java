@@ -10,17 +10,18 @@ import src.client.service.QueryParameter;
 import src.client.service.DayTime;
 
 public class ClassroomSearchPageVM {
-    private ClassroomSearchPage page;
+    private static ClassroomSearchPageVM instance = null;
     private Query query;
+    private String generatedQuery;
 
     public ClassroomSearchPageVM(ClassroomSearchPage page) {
-        this.page = page;
         this.query = new Query();
         DayTime day = new DayTime();
+        this.generatedQuery = null;
 
         // System.out.println("Initializing ClassroomSearchPageVM");
 
-        page.searchButton.addActionListener(new ActionListener() {
+        ActionListener searchActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // System.out.println("Search button clicked"); // デバッグメッセージ
                 try {
@@ -34,20 +35,23 @@ public class ClassroomSearchPageVM {
                         }
                     }
                     if (page.checkBoxPower.isSelected())
-                        query.setParameter(QueryParameter.POWER, "1");
+                        query.setParameter(QueryParameter.OUTLETS, "1");
                     if (page.checkBoxLargeDesk.isSelected())
-                        query.setParameter(QueryParameter.LARGE_DESK, "1");
+                        query.setParameter(QueryParameter.DESK_SIZE, "1");
                     if (page.checkBoxQuiet.isSelected())
-                        query.setParameter(QueryParameter.QUIET, "1");
+                        query.setParameter(QueryParameter.CROWDEDNESS, "1");
                     if (page.checkBoxNetwork.isSelected())
                         query.setParameter(QueryParameter.NETWORK, "1");
 
-                    query.sendQueryToServer();
+                    generatedQuery = query.getQuery();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        });
+        };
+
+        System.out.println("Adding search button action listener");
+        page.searchButton.addActionListener(searchActionListener);
 
         page.addroomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -62,15 +66,15 @@ public class ClassroomSearchPageVM {
                         }
                     }
                     if (page.checkBoxPower.isSelected())
-                        query.setParameter(QueryParameter.POWER, "1");
+                        query.setParameter(QueryParameter.OUTLETS, "1");
                     if (page.checkBoxLargeDesk.isSelected())
-                        query.setParameter(QueryParameter.LARGE_DESK, "1");
+                        query.setParameter(QueryParameter.DESK_SIZE, "1");
                     if (page.checkBoxQuiet.isSelected())
-                        query.setParameter(QueryParameter.QUIET, "1");
+                        query.setParameter(QueryParameter.CROWDEDNESS, "1");
                     if (page.checkBoxNetwork.isSelected())
                         query.setParameter(QueryParameter.NETWORK, "1");
 
-                    query.sendQueryToServer();
+                    generatedQuery = query.getQuery();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -87,7 +91,7 @@ public class ClassroomSearchPageVM {
                         query.setParameter(QueryParameter.BUILDING, (String) page.buildingComboBox.getSelectedItem());
                         query.setParameter(QueryParameter.DAY, day.getCurrentDayOfWeek());
                         query.setParameter(QueryParameter.valueOf(currentTimeSlot), "1");
-                        query.sendQueryToServer();
+                        generatedQuery = query.getQuery();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -96,5 +100,16 @@ public class ClassroomSearchPageVM {
                 }
             }
         });
+    }
+
+    public static ClassroomSearchPageVM getInstance(ClassroomSearchPage page) {
+        if (instance == null) {
+            instance = new ClassroomSearchPageVM(page);
+        }
+        return instance;
+    }
+
+    public String getGeneratedQuery() {
+        return generatedQuery;
     }
 }
