@@ -13,8 +13,8 @@ public class ClassroomSearchPageVM {
     private ClassroomSearchPage page;
     private Query query;
 
-    public ClassroomSearchPageVM(ClassroomSearchPage page) {
-        this.page = page;
+    public ClassroomSearchPageVM(ClassroomSearchPage Page) {
+        this.page = Page;
         this.query = new Query();
         DayTime day = new DayTime();
 
@@ -25,35 +25,6 @@ public class ClassroomSearchPageVM {
                 // System.out.println("Search button clicked"); // デバッグメッセージ
                 try {
                     query.setType(QueryType.SEARCH);
-                    // クエリのパラメータを設定
-                    query.setParameter(QueryParameter.BUILDING, (String) page.buildingComboBox.getSelectedItem());
-                    query.setParameter(QueryParameter.DAY, (String) page.dayComboBox.getSelectedItem());
-                    for (int i = 0; i < page.timeCheckBoxes.length; i++) {
-                        if (page.timeCheckBoxes[i].isSelected()) {
-                            query.setParameter(QueryParameter.valueOf("TIME" + (i + 1)), "1");
-                        }
-                    }
-                    if (page.checkBoxPower.isSelected())
-                        query.setParameter(QueryParameter.POWER, "1");
-                    if (page.checkBoxLargeDesk.isSelected())
-                        query.setParameter(QueryParameter.LARGE_DESK, "1");
-                    if (page.checkBoxQuiet.isSelected())
-                        query.setParameter(QueryParameter.QUIET, "1");
-                    if (page.checkBoxNetwork.isSelected())
-                        query.setParameter(QueryParameter.NETWORK, "1");
-
-                    query.sendQueryToServer();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        page.addroomButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new ClassroomPostPage();
-                try {
-                    query.setType(QueryType.ADD_CLASSROOM_INFO);
                     // クエリのパラメータを設定
                     query.setParameter(QueryParameter.BUILDING, (String) page.buildingComboBox.getSelectedItem());
                     query.setParameter(QueryParameter.DAY, (String) page.dayComboBox.getSelectedItem());
@@ -95,6 +66,12 @@ public class ClassroomSearchPageVM {
                 } else {
                     JOptionPane.showMessageDialog(page, "現在はお休みです", "お知らせ", JOptionPane.INFORMATION_MESSAGE);
                 }
+            }
+        });
+
+        page.addroomButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new ClassroomPostPage();
             }
         });
     }

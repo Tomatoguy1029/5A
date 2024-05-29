@@ -33,7 +33,7 @@ public class ClassroomSearchPage extends JFrame {
         initializeFilters();
         initializeButtons();
         initializeTableModel();
-        initializeResizeListener();
+        //initializeResizeListener();
 
         new ClassroomSearchPageVM(this);
 
@@ -137,7 +137,7 @@ public class ClassroomSearchPage extends JFrame {
     }
 
     public void initializeButtons() {
-        this.searchButton = new JButton("Search");
+        this.searchButton = new JButton("上記の条件で検索");
         this.addroomButton = new JButton("投稿");
         this.timeButton = new JButton("現在の空き教室を検索");
 

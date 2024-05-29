@@ -132,7 +132,7 @@ public class Search {
         return filteredData;
     }
 
-    private void initializeTableModel() {// データの初期化 TODO: データをサーバーから取得
+    private void initializeTableModel() {// データの初期化 
         String[] columnNames = { "Name", "Location", "Seats", "Outlets", "Desk Size", "Available", "Edit" };
         Object[][] data = new Sample().getSampleData();
         model = new DefaultTableModel(data, columnNames);
