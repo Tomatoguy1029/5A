@@ -38,6 +38,14 @@ public class Classroom {
         this.location = location;
     }
 
+    public int getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(int building) {
+        this.building = building;
+    }
+
     public int getSeats() {
         return seats;
     }
@@ -85,4 +93,21 @@ public class Classroom {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Classroom{" +
+                "classroomId=" + classroomId +
+                ", name='" + name + '\'' +
+                ", location='" + location + '\'' +
+                ", building=" + building +
+                ", seats=" + seats +
+                ", outlets=" + outlets +
+                ", deskSize=" + deskSize +
+                ", available='" + available + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                '}';
+    }
+
 }

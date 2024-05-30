@@ -8,6 +8,7 @@ import src.client.service.Query;
 import src.client.service.QueryType;
 import src.client.service.QueryParameter;
 import src.client.service.DayTime;
+import src.client.Main;
 
 public class ClassroomSearchPageVM {
     private static ClassroomSearchPageVM instance = null;
@@ -27,7 +28,10 @@ public class ClassroomSearchPageVM {
                 try {
                     query.setType(QueryType.SEARCH);
                     // クエリのパラメータを設定
-                    query.setParameter(QueryParameter.BUILDING, (String) page.buildingComboBox.getSelectedItem());
+                    String building = (String) page.buildingComboBox.getSelectedItem();
+                    int buildingNumber = Integer.parseInt(building.replace("号館", ""));
+                    query.setParameter(QueryParameter.BUILDING, String.valueOf(buildingNumber));
+
                     query.setParameter(QueryParameter.DAY, (String) page.dayComboBox.getSelectedItem());
                     for (int i = 0; i < page.timeCheckBoxes.length; i++) {
                         if (page.timeCheckBoxes[i].isSelected()) {
@@ -43,7 +47,10 @@ public class ClassroomSearchPageVM {
                     if (page.checkBoxNetwork.isSelected())
                         query.setParameter(QueryParameter.NETWORK, "1");
 
-                    generatedQuery = query.getQuery();
+                    synchronized (Main.lock) {
+                        generatedQuery = query.getQuery();
+                        Main.lock.notify();
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -74,7 +81,10 @@ public class ClassroomSearchPageVM {
                     if (page.checkBoxNetwork.isSelected())
                         query.setParameter(QueryParameter.NETWORK, "1");
 
-                    generatedQuery = query.getQuery();
+                    synchronized (Main.lock) {
+                        generatedQuery = query.getQuery();
+                        Main.lock.notify();
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -88,18 +98,34 @@ public class ClassroomSearchPageVM {
                     try {
                         query.setType(QueryType.SEARCH);
                         // クエリのパラメータを設定
-                        query.setParameter(QueryParameter.BUILDING, (String) page.buildingComboBox.getSelectedItem());
                         query.setParameter(QueryParameter.DAY, day.getCurrentDayOfWeek());
                         query.setParameter(QueryParameter.valueOf(currentTimeSlot), "1");
-                        generatedQuery = query.getQuery();
+
+                        synchronized (Main.lock) {
+                            generatedQuery = query.getQuery();
+                            Main.lock.notify();
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 } else {
-                    JOptionPane.showMessageDialog(page, "現在はお休みです", "お知らせ", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(page, "現在はお休みです", "お知らせ",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
+    }
+
+    public String getGeneratedQuery() {
+        return generatedQuery;
+    }
+
+    public void clearGeneratedQuery() {
+        generatedQuery = null;
+    }
+
+    public void clearQueryParameters() {
+        query = new Query();
     }
 
     public static ClassroomSearchPageVM getInstance(ClassroomSearchPage page) {
@@ -107,9 +133,5 @@ public class ClassroomSearchPageVM {
             instance = new ClassroomSearchPageVM(page);
         }
         return instance;
-    }
-
-    public String getGeneratedQuery() {
-        return generatedQuery;
     }
 }
