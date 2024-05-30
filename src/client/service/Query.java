@@ -31,7 +31,7 @@ public class Query {
     public String getQuery() throws Exception {// クエリをサーバーに送信
         query = type + "?" + generateParamString();
         // System.out.println("Query type: " + type);
-        System.out.println("return query: " + query);
+        // System.out.println("return query: " + query);
         return query;
     }
 }

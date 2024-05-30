@@ -2,9 +2,14 @@ package src.server;
 
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import src.database.Database;
 import src.server.service.Search;
 
 public class Main {
@@ -52,19 +57,33 @@ public class Main {
         public void run() {
             try {
                 System.out.println("Connection accepted: " + socket);
-                while (true) {
-                    String str = in.readLine(); // データの受信
-                    if (str.equals("END")) {
-                        break;
-                    } else {
-                        try {
-                            conductQuery(str);
-                        } catch (NumberFormatException e) {
-                            out.println("Invalid input. Please enter a number (1 or 2):");
+
+                // データベース接続
+                Connection conn = Database.connect();
+                if (conn == null) {
+                    System.err.println("Failed to establish database connection.");
+                    return;
+                }
+
+                try {
+                    while (true) {
+                        String str = in.readLine(); // データの受信
+                        System.out.println("Received: " + str);
+                        if (str == null || str.equals("END")) {
+                            break;
+                        } else {
+                            try {
+                                conductQuery(str, conn);
+                            } catch (NumberFormatException e) {
+                                out.println("Invalid input. Please enter a valid query:");
+                            }
                         }
                     }
+                } finally {
+                    conn.close();
                 }
-            } catch (IOException e) {
+
+            } catch (IOException | SQLException e) {
                 System.err.println("Connection error: " + e.getMessage());
             } finally {
                 try {
@@ -106,7 +125,7 @@ public class Main {
             return parameters;
         }
 
-        public void conductQuery(String query) {
+        public void conductQuery(String query, Connection conn) {
             Map<String, String> parameters = parseQuery(query);
             String mode = parameters.get("MODE");
 
@@ -115,22 +134,33 @@ public class Main {
                 return;
             }
 
+            // System.out.println("Parameters: " + parameters);
+            Gson gson = new GsonBuilder().create();
+            // System.out.println("Mode: " + mode);
+
             switch (mode) {
                 case "SEARCH":
-                    Search.searchClassrooms(parameters);
-                    out.println("Search completed.");
-                    out.println(Search.searchResult);
+                    // System.out.println("Start searching...");
+                    Search.searchClassrooms(parameters, conn);
+                    System.out.println("Search completed.");
+                    String jsonResponse = gson.toJson(Search.searchResult);
+                    // System.out.println(jsonResponse);
+                    out.println(jsonResponse); // JSON形式の結果を送信
+                    out.println("END_OF_RESPONSE"); // クライアント側で応答の終わりを判断するためのマーカー
                     break;
                 case "ADD_CLASSROOM_INFO":
                     // AddClassroomInfo(parameters);
                     out.println("Add classroom info completed.");
+                    out.println("END_OF_RESPONSE");
                     break;
                 case "POST_CLASSROOM_STATUS":
                     // PostClassroomStatus(parameters);
                     out.println("Post classroom status completed.");
+                    out.println("END_OF_RESPONSE");
                     break;
                 default:
                     out.println("Unknown mode: " + mode);
+                    out.println("END_OF_RESPONSE");
             }
         }
     }
