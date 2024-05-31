@@ -70,7 +70,7 @@ public class DayTime {
         }
     }
 
-    private String convertTimeSlotToPeriod(String timeSlot) {
+    private String convertTimeSlotToPeriod(String timeSlot) {// 時間帯を1限から7限に変換
         switch (timeSlot) {
             case "TIME1":
                 return "1限";

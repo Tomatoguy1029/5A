@@ -68,7 +68,7 @@ public class Main {
                 try {
                     while (true) {
                         String str = in.readLine(); // データの受信
-                        System.out.println("Received: " + str);
+                        // System.out.println("Received: " + str);
                         if (str == null || str.equals("END")) {
                             break;
                         } else {
