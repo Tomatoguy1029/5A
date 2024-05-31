@@ -57,7 +57,7 @@ public class ClassroomSearchPageVM {
             }
         };
 
-        System.out.println("Adding search button action listener");
+        // System.out.println("Adding search button action listener");
         page.searchButton.addActionListener(searchActionListener);
 
         page.addroomButton.addActionListener(new ActionListener() {
@@ -97,12 +97,13 @@ public class ClassroomSearchPageVM {
                 if (!currentTimeSlot.equals("お休み")) {
                     try {
                         query.setType(QueryType.SEARCH);
-                        // クエリのパラメータを設定
                         query.setParameter(QueryParameter.DAY, day.getCurrentDayOfWeek());
+
                         query.setParameter(QueryParameter.valueOf(currentTimeSlot), "1");
 
                         synchronized (Main.lock) {
                             generatedQuery = query.getQuery();
+                            System.out.println("Generated Query: " + generatedQuery); // デバッグメッセージ
                             Main.lock.notify();
                         }
                     } catch (Exception ex) {
@@ -114,6 +115,7 @@ public class ClassroomSearchPageVM {
                 }
             }
         });
+
     }
 
     public String getGeneratedQuery() {

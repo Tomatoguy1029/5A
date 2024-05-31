@@ -1,7 +1,7 @@
 package src.model;
 
 public class Classroom {
-    private long classroomId;
+    private String classroomId;
     private String name;
     private String location;
     private int building;
@@ -14,11 +14,11 @@ public class Classroom {
 
     // Getters and setters for all fields
 
-    public long getClassroomId() {
+    public String getClassroomId() {
         return classroomId;
     }
 
-    public void setClassroomId(long classroomId) {
+    public void setClassroomId(String classroomId) {
         this.classroomId = classroomId;
     }
 

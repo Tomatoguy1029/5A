@@ -34,7 +34,7 @@ public class Search {
             sql += " AND building = ?";
         }
         if (parameters.containsKey("OUTLETS")) {
-            sql += " AND outlets >= 10";
+            sql += " AND outlets = 1";
         }
         if (parameters.containsKey("DESK_SIZE")) {
             sql += " AND desk_size = 1";
@@ -71,7 +71,7 @@ public class Search {
 
             while (rs.next()) {
                 Classroom classroom = new Classroom();
-                classroom.setClassroomId(rs.getLong("classroom_id"));
+                classroom.setClassroomId(rs.getString("classroom_id"));
                 classroom.setName(rs.getString("name"));
                 classroom.setLocation(rs.getString("location"));
                 classroom.setBuilding(rs.getInt("building"));

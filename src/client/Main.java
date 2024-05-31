@@ -10,6 +10,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.*;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -107,6 +108,41 @@ public class Main {
 
         JTable table = new JTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
+
+        table.getSelectionModel().addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                Classroom selectedClassroom = classrooms.get(table.getSelectedRow());
+                showAvailableTimesDialog(selectedClassroom);
+            }
+        });
+
         JOptionPane.showMessageDialog(null, scrollPane, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private static void showAvailableTimesDialog(Classroom classroom) {
+        String[] columnNames = { "曜日", "何限" };
+        Map<String, List<Integer>> availableTimes = parseAvailableTimes(classroom.getAvailable());
+        Object[][] data = new Object[availableTimes.size()][2];
+
+        int row = 0;
+        for (Map.Entry<String, List<Integer>> entry : availableTimes.entrySet()) {
+            data[row][0] = entry.getKey();
+            data[row][1] = entry.getValue().toString();
+            row++;
+        }
+
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JOptionPane.showMessageDialog(null, scrollPane, classroom.getName() + " - Available Times",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private static Map<String, List<Integer>> parseAvailableTimes(String availableJson) {
+        // JSONパーサーを使用して、availableJsonをMap<String, List<Integer>>に変換
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, List<Integer>>>() {
+        }.getType();
+        return gson.fromJson(availableJson, type);
     }
 }
