@@ -1,16 +1,17 @@
 package src.client;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import src.client.pages.ClassroomSearchPage;
-import src.client.pages.ClassroomSearchPageVM;
-import src.model.Classroom;
-
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.*;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import src.client.pages.ClassroomSearchPage;
+import src.client.pages.ClassroomSearchPageVM;
+import src.model.Classroom;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
