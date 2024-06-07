@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Query {
     HashMap<QueryParameter, String> parameters;
     QueryType type;
+    String query;
 
     public Query() {
         parameters = new HashMap<>();
@@ -27,9 +28,10 @@ public class Query {
                 .orElse("");
     }
 
-    public void sendQueryToServer() throws Exception {// クエリをサーバーに送信
-        System.out.println("Query type: " + type);
-        String query = type + "?" + generateParamString();
-        System.out.println("Query sent to server: " + query);
+    public String getQuery() throws Exception {// クエリをサーバーに送信
+        query = type + "?" + generateParamString();
+        // System.out.println("Query type: " + type);
+        // System.out.println("return query: " + query);
+        return query;
     }
 }

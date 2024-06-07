@@ -1,5 +1,9 @@
 package src.client.service;
 
 public enum QueryParameter {
+<<<<<<< HEAD
     DAY, TIME1, TIME2, TIME3, TIME4, TIME5, TIME6, TIME7, BUILDING, ROOM, POWER, LARGE_DESK, QUIET, NETWORK
+=======
+    DAY, TIME1, TIME2, TIME3, TIME4, TIME5, TIME6, TIME7, BUILDING, OUTLETS, DESK_SIZE, CROWDEDNESS, NETWORK
+>>>>>>> main
 }

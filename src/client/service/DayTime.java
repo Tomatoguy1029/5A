@@ -21,19 +21,19 @@ public class DayTime {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         switch (dayOfWeek) {
             case Calendar.SUNDAY:
-                return "日曜日";
+                return "日曜";
             case Calendar.MONDAY:
-                return "月曜日";
+                return "月曜";
             case Calendar.TUESDAY:
-                return "火曜日";
+                return "火曜";
             case Calendar.WEDNESDAY:
-                return "水曜日";
+                return "水曜";
             case Calendar.THURSDAY:
-                return "木曜日";
+                return "木曜";
             case Calendar.FRIDAY:
-                return "金曜日";
+                return "金曜";
             case Calendar.SATURDAY:
-                return "土曜日";
+                return "土曜";
             default:
                 return "";
         }
@@ -52,33 +52,58 @@ public class DayTime {
         int totalMinutes = hour * 60 + minute;
 
         if (totalMinutes >= 530 && totalMinutes < 630) {
-            return "1限";
+            return "TIME1";
         } else if (totalMinutes >= 630 && totalMinutes < 740) {
-            return "2限";
+            return "TIME2";
         } else if (totalMinutes >= 740 && totalMinutes < 890) {
-            return "3限";
+            return "TIME3";
         } else if (totalMinutes >= 890 && totalMinutes < 1005) {
-            return "4限";
+            return "TIME4";
         } else if (totalMinutes >= 1005 && totalMinutes < 1120) {
-            return "5限";
+            return "TIME5";
         } else if (totalMinutes >= 1120 && totalMinutes < 1235) {
-            return "6限";
+            return "TIME6";
         } else if (totalMinutes >= 1245 && totalMinutes < 1295) {
-            return "7限";
+            return "TIME7";
         } else {
             return "お休み";
         }
     }
 
-    public void TimeUpdate(JLabel text) {// 1分ごとに現在の日時と時間帯を更新
+    private String convertTimeSlotToPeriod(String timeSlot) {// 時間帯を1限から7限に変換
+        switch (timeSlot) {
+            case "TIME1":
+                return "1限";
+            case "TIME2":
+                return "2限";
+            case "TIME3":
+                return "3限";
+            case "TIME4":
+                return "4限";
+            case "TIME5":
+                return "5限";
+            case "TIME6":
+                return "6限";
+            case "TIME7":
+                return "7限";
+            default:
+                return "お休み";
+        }
+    }
+
+    public void TimeUpdate(JLabel text) { // 1分ごとに現在の日時と時間帯を更新
         Timer timer = new Timer(60000, e -> {
-            text.setText(getCurrentDateTime() + " " + getCurrentTimeSlot());
+            String currentTimeSlot = getCurrentTimeSlot();
+            String formattedTimeSlot = convertTimeSlotToPeriod(currentTimeSlot);
+            text.setText(getCurrentDateTime() + " (" + getCurrentDayOfWeek() + ") " + formattedTimeSlot);
         });
         timer.setInitialDelay(0);
         timer.start();
     }
 
     public String formatCurrentDateTime() {
-        return getCurrentDateTime() + " (" + getCurrentDayOfWeek() + ") " + getCurrentTimeSlot();
+        String currentTimeSlot = getCurrentTimeSlot();
+        String formattedTimeSlot = convertTimeSlotToPeriod(currentTimeSlot);
+        return getCurrentDateTime() + " (" + getCurrentDayOfWeek() + ") " + formattedTimeSlot;
     }
 }
