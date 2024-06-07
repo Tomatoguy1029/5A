@@ -144,11 +144,11 @@ public class ClassroomPostPage extends JFrame {
             // クエリのパラメータを設定
             query.setParameter(QueryParameter.ROOM, (String) roomComboBox.getSelectedItem());
             if (checkBoxQuiet.isSelected())
-                query.setParameter(QueryParameter.QUIET, "1");
+                query.setParameter(QueryParameter.CROWDEDNESS, "1");
             if (checkBoxNetwork.isSelected())
                 query.setParameter(QueryParameter.NETWORK, "1");
             // サーバーへクエリを送信する
-            query.sendQueryToServer();
+            //query.sendQueryToServer();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
