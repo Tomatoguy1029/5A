@@ -23,14 +23,7 @@ public class Main {
     public static final Object lock = new Object();
 
     public static void main(String[] args) throws IOException {
-<<<<<<< HEAD
-        InetAddress addr = InetAddress.getByName("localhost");// IP アドレスへの変換
-        Scanner scanner = new Scanner(System.in); // ユーザー入力を読み取るためのScanner
-        //System.out.println("selected mode:(1)edit classroom info, (2)post classroom status");
-
-=======
         InetAddress addr = InetAddress.getByName("localhost");
->>>>>>> main
         System.out.println("addr = " + addr);
 
         try (Socket socket = new Socket(addr, PORT)) {

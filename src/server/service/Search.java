@@ -1,9 +1,5 @@
 package src.server.service;
 
-<<<<<<< HEAD
-public class Search {
-
-=======
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,5 +88,4 @@ public class Search {
             System.out.println(e.getMessage());
         }
     }
->>>>>>> main
 }

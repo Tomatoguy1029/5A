@@ -15,12 +15,8 @@ public class ClassroomSearchPageVM {
     private Query query;
     private String generatedQuery;
 
-<<<<<<< HEAD
-    public ClassroomSearchPageVM(ClassroomSearchPage Page) {
-        this.page = Page;
-=======
+
     public ClassroomSearchPageVM(ClassroomSearchPage page) {
->>>>>>> main
         this.query = new Query();
         DayTime day = new DayTime();
         this.generatedQuery = null;
@@ -65,8 +61,6 @@ public class ClassroomSearchPageVM {
         // System.out.println("Adding search button action listener");
         page.searchButton.addActionListener(searchActionListener);
 
-<<<<<<< HEAD
-=======
         page.addroomButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -98,7 +92,6 @@ public class ClassroomSearchPageVM {
             }
         });
 
->>>>>>> main
         page.timeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String currentTimeSlot = day.getCurrentTimeSlot();
@@ -124,13 +117,6 @@ public class ClassroomSearchPageVM {
             }
         });
 
-<<<<<<< HEAD
-        page.addroomButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new ClassroomPostPage();
-            }
-        });
-=======
     }
 
     public String getGeneratedQuery() {
@@ -150,6 +136,5 @@ public class ClassroomSearchPageVM {
             instance = new ClassroomSearchPageVM(page);
         }
         return instance;
->>>>>>> main
     }
 }
